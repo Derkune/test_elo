@@ -1,15 +1,15 @@
 <html>
 <head>
 	<style>
-	.flex-container {
+	.imgbox {
 	  display: flex;
 	  flex-wrap: wrap;
 	  justify-content: center;
 	 // background-color: DodgerBlue;
 	}
 
-	.flex-container > div {
-	  background-color: rgba(255, 100, 50, 0.7);;
+	.imgbox > div {
+	  background-color: rgba(255, 100, 50, 0.7);
 	  width: 410px;
 	  height: 450px;
 	  margin: 20px;
@@ -19,38 +19,64 @@
 	  padding: 5px 0;
 	}
 	
-	.flex-container > div:hover {
+	.imgbox> div:hover {
 	  background-color: rgba(100, 255, 50, 0.7);
 	  transition: 0.2s;
 	}
 	
-	cimg {
-	}
-	
-	h1{
+	#title{
 	  font-family: Verdana;
 	  text-align: center;
 	  margin:0;
 	  color: black;
 		font-size: 72px;
 	  -webkit-text-stroke: 2px black;
-	  -webkit-text-fill-color: yellow;
+	  -webkit-text-fill-color: white;
 	}
 	
-	.bg-image {
+	#infotext{
+	  font-family: Verdana;
+	  text-align: center;
+	  margin:0;
+	  color: black;
+		font-size: 48px;
+	  -webkit-text-stroke: 2px black;
+	  -webkit-text-fill-color: white;
+	}
+	
+	
+	#info{
+	  position: fixed;
+	  height: 95%;
+	  width: 95%;
+	  top: 2.5%;
+	  left: 2.5% ;
+	  justify-content: center;
+	  background-color: rgba(50, 50, 50, 0.96);
+	  border-radius: 50px;
+	  z-index: 10;
+	}
+	
+	#info.fade{
+		transition: 1s;
+		opacity: 0;
+		visibility: hidden;
+	}
+	
+	.bg-image{
 	  background-image: url("Assets/Season1.jpg");
-	  
 	  filter: blur(1.5px);
 	  -webkit-filter: blur(1.5px);
-	  
 	  height: 100%; 
 	  background-position: center;
+	  background-attachment: fixed;
 	  background-repeat: no-repeat;
 	  background-size: cover;
+	  z-index: 1;
 	}
 	
 	.content {
-	  position: fixed;
+	  position: absolute;
 	  left: 0;
 	  right: 0;
 	  z-index: 2;
@@ -74,17 +100,46 @@
 	console.log(uid);
 	</script>
 </head>
+
 <body>
+	
+	
+	
 	<div class="content">
-	<h1>Elo Rank Chloe Pics</h1>
+	
+	<h1 id="title">Elo Rate Chloe Pics</h1>
 
 
-	<div class="flex-container">
-	  <div> <img class="cimg" src="Images/200.jpg" style="width:400px;height:400px;"> </div>
-	  <div> <img class="cimg" src="Images/201.jpg" style="width:400px;height:400px;"> </div>
+	<div class="imgbox">
+	  <div id="A" onclick="send('A')"> <img class="cimg" src="Images/200.jpg" style="width:400px;height:400px;"> </div>
+	  <div id="B" onclick="send('B')"> <img class="cimg" src="Images/201.jpg" style="width:400px;height:400px;"> </div>
 	</div>
+	<table>
+	  <tr>
+		<td>Key:</td>
+		<td id="key"></td>
+	  </tr>
+	  <tr>
+		<td>Key Code:</td>
+		<td id="keyCode"></td>
+	  </tr>
+	  <tr>
+		<td>Event Code:</td>
+		<td id="eventCode"></td>
+	  </tr>
+	</table>
+	<script type="text/javascript">
+	  window.addEventListener("keydown", function(e) {
+		//tested in IE/Chrome/Firefox
+		document.getElementById("key").innerHTML = e.key;
+		document.getElementById("keyCode").innerHTML = e.keyCode;
+		document.getElementById("eventCode").innerHTML = e.code;
+	  })
+	</script>
 	<script> 
-		function send(){
+		var a = 100
+		var b = 200
+		function send(r){
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -94,11 +149,23 @@
 				// Request finished. Do processing here.
 				}
 			}
-			xhr.send("a=100&b=200&uid="+uid);
+			xhr.send("a="+a+"&b="+b+"&r="+r+"&uid="+uid);
 		}
 	</script>
-	<button onclick="send();">Call Sheets API</button> <br><br>
 	</div>
+	
+	<script>
+	function clearinfo() {
+	  document.getElementById("info").classList.toggle('fade');
+	}
+	</script>
+	
+	
+	<div id="info" onclick="clearinfo()">
+	  <h1 id="infotext"> Instructions for Usage </h1>
+	</div>
+	
 	<div class="bg-image"></div>
+	
 </body>
 </html>
