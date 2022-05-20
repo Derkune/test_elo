@@ -1,0 +1,104 @@
+<html>
+<head>
+	<style>
+	.flex-container {
+	  display: flex;
+	  flex-wrap: wrap;
+	  justify-content: center;
+	 // background-color: DodgerBlue;
+	}
+
+	.flex-container > div {
+	  background-color: rgba(255, 100, 50, 0.7);;
+	  width: 410px;
+	  height: 450px;
+	  margin: 20px;
+	  text-align: center;
+	  line-height: 75px;
+	  font-size: 30px;
+	  padding: 5px 0;
+	}
+	
+	.flex-container > div:hover {
+	  background-color: rgba(100, 255, 50, 0.7);
+	  transition: 0.2s;
+	}
+	
+	cimg {
+	}
+	
+	h1{
+	  font-family: Verdana;
+	  text-align: center;
+	  margin:0;
+	  color: black;
+		font-size: 72px;
+	  -webkit-text-stroke: 2px black;
+	  -webkit-text-fill-color: yellow;
+	}
+	
+	.bg-image {
+	  background-image: url("Assets/Season1.jpg");
+	  
+	  filter: blur(1.5px);
+	  -webkit-filter: blur(1.5px);
+	  
+	  height: 100%; 
+	  background-position: center;
+	  background-repeat: no-repeat;
+	  background-size: cover;
+	}
+	
+	.content {
+	  position: fixed;
+	  left: 0;
+	  right: 0;
+	  z-index: 2;
+	  margin-left: 20px;
+	  margin-right: 20px;
+	  justify-content: center;
+	}
+	</style>
+	
+	<script>
+	function makeid(length) {
+		var result           = '';
+		var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for ( var i = 0; i < length; i++ ) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result
+	}
+	var uid = makeid(5);
+	console.log(uid);
+	</script>
+</head>
+<body>
+	<div class="content">
+	<h1>Elo Rank Chloe Pics</h1>
+
+
+	<div class="flex-container">
+	  <div> <img class="cimg" src="Images/200.jpg" style="width:400px;height:400px;"> </div>
+	  <div> <img class="cimg" src="Images/201.jpg" style="width:400px;height:400px;"> </div>
+	</div>
+	<script> 
+		function send(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+			xhr.onreadystatechange = function() { // Call a function when the state changes.
+			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+				// Request finished. Do processing here.
+				}
+			}
+			xhr.send("a=100&b=200&uid="+uid);
+		}
+	</script>
+	<button onclick="send();">Call Sheets API</button> <br><br>
+	</div>
+	<div class="bg-image"></div>
+</body>
+</html>
