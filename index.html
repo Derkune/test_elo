@@ -5,7 +5,6 @@
 	  display: flex;
 	  flex-wrap: wrap;
 	  justify-content: center;
-	 // background-color: DodgerBlue;
 	}
 
 	.imgbox > div {
@@ -34,10 +33,10 @@
 	  -webkit-text-fill-color: white;
 	}
 	
-	#infotext{
+	#infotitle{
 	  font-family: Verdana;
 	  text-align: center;
-	  margin:0;
+	  margin:10;
 	  color: black;
 		font-size: 48px;
 	  -webkit-text-stroke: 2px black;
@@ -58,7 +57,7 @@
 	}
 	
 	#info.fade{
-		transition: 1s;
+		transition: 0.5s;
 		opacity: 0;
 		visibility: hidden;
 	}
@@ -84,6 +83,28 @@
 	  margin-right: 20px;
 	  justify-content: center;
 	}
+	
+	img {
+	  width: 400px;
+	  height: 400px;
+	  object-fit: contain;
+	}
+	
+	.keypadbox {
+	  display: flex;
+	  justify-content: center;
+	  margin: 0;
+	}
+	
+	.infotext{
+	  font-family: Verdana;
+	  text-align: center;
+	  margin:0;
+	  color: white;
+	  font-size: 22px;
+	}
+		
+	
 	</style>
 	
 	<script>
@@ -97,48 +118,93 @@
 		return result
 	}
 	var uid = makeid(5);
-	console.log(uid);
+	console.log('Session ID:',uid);
+	
+	var noop = function(){};
+	var images = [];
+	var imgids = [];
+	var index = 0;
+	
+	function getRandomID(min,max,len) {
+		var arr = [];
+		while(arr.length < len){
+			var r = Math.floor(Math.random() * (max - min + 1)) + min;
+			if(imgids.indexOf(r) === -1 && arr.indexOf(r) === -1) arr.push(r);
+		}
+		return arr
+		
+	}
+	
+	imgids = imgids.concat(getRandomID(1,680,2));
+	
+	function preloadImages(ids, imgs, callback) {
+		var img;
+		var remaining = ids.length;
+		for (var i = 0; i < ids.length; i++) {
+			img = new Image();
+			img.onload = function() {
+				--remaining;
+				if (remaining <= 0) {
+					callback();
+				}
+			};
+			
+			img.src = 'Images/'+ids[i].toString().padStart(3,'0')+'.jpg';
+			console.log(img,ids[i])
+			imgs.push(img);
+		}
+	}
+	preloadImages(imgids,images,noop);
+	
 	</script>
 </head>
 
 <body>
 	
-	
-	
 	<div class="content">
 	
+	<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.4);">
 	<h1 id="title">Elo Rate Chloe Pics</h1>
-
+	</div>
 
 	<div class="imgbox">
-	  <div id="A" onclick="send('A')"> <img class="cimg" src="Images/200.jpg" style="width:400px;height:400px;"> </div>
-	  <div id="B" onclick="send('B')"> <img class="cimg" src="Images/201.jpg" style="width:400px;height:400px;"> </div>
+	  <div id="A" onclick="send('A');next()"> <img id="imgA"> </div>
+	  <div id="B" onclick="send('B');next()"> <img id="imgB"> </div>
 	</div>
-	<table>
-	  <tr>
-		<td>Key:</td>
-		<td id="key"></td>
-	  </tr>
-	  <tr>
-		<td>Key Code:</td>
-		<td id="keyCode"></td>
-	  </tr>
-	  <tr>
-		<td>Event Code:</td>
-		<td id="eventCode"></td>
-	  </tr>
-	</table>
+	
 	<script type="text/javascript">
-	  window.addEventListener("keydown", function(e) {
-		//tested in IE/Chrome/Firefox
-		document.getElementById("key").innerHTML = e.key;
-		document.getElementById("keyCode").innerHTML = e.keyCode;
-		document.getElementById("eventCode").innerHTML = e.code;
-	  })
+	  window.addEventListener("keydown", keylog)
+	  function keylog(e){
+		if (e.key=='a'){ send('A');next() }
+		if (e.key=='d'){ send('B');next() }
+		if (e.key=='w'){ send('T');next() }
+		if (e.key=='s'){ next() }
+	  }
 	</script>
 	<script> 
 		var a = 100
 		var b = 200
+		var prepair
+		index = -2
+		
+		function next(){
+			index = index + 2
+			if (imgids.length>50) {
+				imgids=imgids.slice(-2);
+				images=images.slice(-2);
+				index = 0
+			}
+			prepair=getRandomID(1,680,2);
+			imgids=imgids.concat(prepair)
+			document.getElementById("imgA").src = images[index].src;
+			document.getElementById("imgB").src = images[index+1].src;
+			document.getElementById("imgA").alt = images[index].src;
+			document.getElementById("imgB").alt = images[index+1].src;
+			preloadImages(prepair,images,noop);
+		}
+		
+		next()
+		
 		function send(r){
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
@@ -149,7 +215,7 @@
 				// Request finished. Do processing here.
 				}
 			}
-			xhr.send("a="+a+"&b="+b+"&r="+r+"&uid="+uid);
+			xhr.send("a="+imgids[index]+"&b="+imgids[index+1]+"&r="+r+"&uid="+uid);
 		}
 	</script>
 	</div>
@@ -162,7 +228,9 @@
 	
 	
 	<div id="info" onclick="clearinfo()">
-	  <h1 id="infotext"> Instructions for Usage </h1>
+	  <h1 id="infotitle"> Instructions for Usage </h1>
+	  <p class='infotext'> This webapp shows two images of Chloe for you to compare.<br>Choose the one that you prefer / like better / want to see more of.<br><br> You can click on the image or use the keypad as shown below.<br>If you can't decide, you can tie them or skip to the next pair.</p> 
+	  <div class="keypadbox"><img src="Assets/keypad.svg" style="vertical-align:middle"></div>
 	</div>
 	
 	<div class="bg-image"></div>

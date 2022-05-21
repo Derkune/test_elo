@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="95.915 89.163 308.17 210.837" width="308.17" height="210.837" xmlns="http://www.w3.org/2000/svg">
+  <rect x="95.915" y="89.163" width="308.17" height="210.837" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(255, 253, 242);"/>
+  <rect x="105.985" y="200" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(245, 248, 255);"/>
+  <rect x="205.985" y="200" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(245, 248, 255);"/>
+  <rect x="205.985" y="100" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(245, 248, 255);"/>
+  <rect x="305.985" y="200" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(245, 248, 255);"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="232.679" y="146.858">W</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="220.552" y="167.113">Tie Images</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="237.994" y="247.129">S</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="217.662" y="267.384">Skip to Next</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="137.994" y="247.649">A</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="117.472" y="267.904">Choose Left</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="337.994" y="247.423">D</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="313.472" y="267.678">Choose Right</text>
+</svg>
