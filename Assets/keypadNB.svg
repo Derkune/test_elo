@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="105.984 155.985 288.031 188.031" width="288.031" height="188.031" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="105.984" y="255.985" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(255, 252, 237);"/>
+    <rect x="205.984" y="255.985" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(255, 252, 237);"/>
+    <rect x="205.984" y="155.985" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(255, 252, 237);"/>
+    <rect x="305.984" y="255.985" width="88.031" height="88.031" rx="15" ry="15" style="stroke: rgb(0, 0, 0); fill: rgb(255, 252, 237);"/>
+  </g>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="232.678" y="202.843">W</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="220.551" y="223.098">Tie Images</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="237.993" y="303.113">S</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="217.661" y="323.369">Skip to Next</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="137.993" y="303.634">A</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="117.471" y="323.888">Choose Left</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 36px; white-space: pre;" x="337.993" y="303.408">D</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 12px; white-space: pre;" x="313.471" y="323.663">Choose Right</text>
+</svg>
