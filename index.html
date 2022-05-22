@@ -24,23 +24,19 @@
 	}
 	
 	#title{
-	  font-family: Verdana;
+	  font-family: Sans-Serif;
 	  text-align: center;
 	  margin:0;
-	  color: black;
-		font-size: 72px;
-	  -webkit-text-stroke: 2px black;
-	  -webkit-text-fill-color: white;
+	  color: white;
+	  font-size: 72px;
 	}
 	
 	#infotitle{
-	  font-family: Verdana;
+	  font-family: Sans-Serif;
 	  text-align: center;
 	  margin:10;
-	  color: black;
+	  color: white;
 		font-size: 48px;
-	  -webkit-text-stroke: 2px black;
-	  -webkit-text-fill-color: white;
 	}
 	
 	
@@ -97,7 +93,7 @@
 	}
 	
 	.infotext{
-	  font-family: Verdana;
+	  font-family: Sans-Serif;
 	  text-align: center;
 	  margin:0;
 	  color: white;
@@ -109,11 +105,10 @@
 	
 	<script>
 	function makeid(length) {
-		var result           = '';
-		var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		var charactersLength = characters.length;
+		var result = '';
+		var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 		for ( var i = 0; i < length; i++ ) {
-			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			result += charset.charAt(Math.floor(Math.random() * charset.length));
 		}
 		return result
 	}
@@ -132,7 +127,6 @@
 			if(imgids.indexOf(r) === -1 && arr.indexOf(r) === -1) arr.push(r);
 		}
 		return arr
-		
 	}
 	
 	imgids = imgids.concat(getRandomID(1,680,2));
@@ -163,7 +157,7 @@
 	
 	<div class="content">
 	
-	<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.4);">
+	<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.5);">
 	<h1 id="title">Elo Rate Chloe Pics</h1>
 	</div>
 
