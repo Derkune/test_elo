@@ -119,6 +119,35 @@
 	var images = [];
 	var imgids = [];
 	var index = 0;
+	var ratings = 0;
+	
+	function getElo(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+			xhr.onreadystatechange = function() { // Call a function when the state changes.
+			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					ratings = JSON.parse("[" + xhr.response + "]")[0];
+				}
+			}
+			xhr.send("");
+	}
+	
+	getElo()
+	
+	function getPairID(){
+		if (ratings==0) { return getRandomID(1,680,2)}
+		var max = ratings.length
+		var a = Math.floor(Math.random() * (max - 3)) + 2; // exclude 2 from each end
+		var d = Math.floor(10*Math.random()) - 5; // Search +- 5
+		if (d>=0){ d=d+1 } // Avoid zero
+		var b = a + d
+		if (b<0){ b=0 } // Clip ends, note this increases prob of ends in pair
+		if (b>max) { b=max }
+		console.log('Load Rankings:',a,b)
+		return [ratings[a][0],ratings[b][0]]
+	}
 	
 	function getRandomID(min,max,len) {
 		var arr = [];
@@ -129,7 +158,7 @@
 		return arr
 	}
 	
-	imgids = imgids.concat(getRandomID(1,680,2));
+	imgids = imgids.concat(getPairID());
 	
 	function preloadImages(ids, imgs, callback) {
 		var img;
@@ -148,7 +177,9 @@
 			imgs.push(img);
 		}
 	}
-	preloadImages(imgids,images,noop);
+	
+	
+	preloadImages(imgids,images,noop)
 	
 	</script>
 </head>
@@ -188,7 +219,7 @@
 				images=images.slice(-2);
 				index = 0
 			}
-			prepair=getRandomID(1,680,2);
+			prepair=getPairID();
 			imgids=imgids.concat(prepair)
 			document.getElementById("imgA").src = images[index].src;
 			document.getElementById("imgB").src = images[index+1].src;

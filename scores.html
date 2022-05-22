@@ -12,7 +12,7 @@
 	  background-color: rgba(100, 200, 255, 0.5);
 	  border-radius: 50px;*/
 	}
-	
+
 	#title{
 	  font-family: Sans-Serif;
 	  text-align: center;
@@ -21,34 +21,12 @@
 	  font-size: 48px;
 	}
 	
-	
-	.bg-image{
-	  background-image: url("../Assets/Season1.jpg");
-	  filter: blur(1.5px);
-	  -webkit-filter: blur(1.5px);
-	  height: 100%; 
-	  background-position: center;
-	  background-attachment: fixed;
-	  background-repeat: no-repeat;
-	  background-size: cover;
-	  z-index: 1;
-	}
-	
-	.content {
-	  position: absolute;
-	  left: 0;
-	  right: 0;
-	  z-index: 2;
-	  margin-left: 20px;
-	  margin-right: 20px;
-	  justify-content: center;
-	}
-	
 	img {
 	  width: 400px;
 	  height: 400px;
 	  object-fit: contain;
 	}
+	
 	
 	.line-break {
 	  width: 100%;
@@ -56,32 +34,26 @@
 	}
 	
 	</style>
-	
-	<script>
-	var noop = function(){};
-	</script>
-
 </head>
 
 <body>
-	
 	<script> 
 		
-		var bsrc = 0;
+		var Csrc = 0;
 		var ratings = 0;
-		var bimg = new Image();
+		var Cimg = new Image();
 		var xlim;
 		
 		function updateImg(e){
-			if (bsrc == 0) { return 0 }
+			if (Csrc == 0) { return 0 } // Check if canvas is drawn yet
 			var c = document.getElementById("plot");
 			var rect = c.getBoundingClientRect()
 			var ctx = c.getContext("2d");
 			var x = Math.floor(e.clientX - rect.left)
-			if (x<0 || x>=xlim) { return }
-			ctx.drawImage(bimg,0,0);
+			if (x<0 || x>=xlim) { return } // Check mouse is inside canvas
+			ctx.drawImage(Cimg,0,0);
 			var rating = ratings[x];
-			ctx.beginPath();
+			ctx.beginPath(); // Draw the blue indicator line
 			ctx.strokeStyle = 'rgb(100,100,255)';
 			ctx.lineWidth = 2;
 			ctx.moveTo(x,200);
@@ -92,7 +64,8 @@
 			ctx.font = "48px sans-serif";
 			ctx.fillText("Image: "+rating[0].toString(), 20, 50);
 			ctx.fillText("Elo: "+rating[1].toString(), 20, 100);
-			var simg = document.getElementById("simg");
+			ctx.fillText("Rank: "+x.toString(), 20, 150);
+			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+rating[0].toString().padStart(3,'0')+'.jpg';
 		}
 		
@@ -103,25 +76,17 @@
 			c.width = xlim;
 			var ctx = c.getContext("2d");
 			
-			// Neat gradient that I don't think I'll use
-			/*var rgG = ctx.createLinearGradient(0, -100, 0, 500);
-			rgG.addColorStop(0,"green");
-			rgG.addColorStop(0.5,"white");
-			rgG.addColorStop(1,"red"); 
-			ctx.fillStyle = rgG;
-			ctx.fillRect(0, 0, xlim, 400);*/
-			
 			ctx.fillStyle = "white";
 			ctx.fillRect(0, 0, xlim, 400)
 			
-			for (var i = 0; i < xlim; i++) {
+			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
 				var score = ratings[i][1];
 				var r=0;
 				var g=0;
-				if (score>1500){ g = 10*Math.sqrt(score-1500) }
-				else { r = 10*Math.sqrt(1500-score) }
+				if (score>1500){ r = 10*Math.sqrt(score-1500) }
+				else { g = 10*Math.sqrt(1500-score) }
 				ctx.beginPath();
-				ctx.strokeStyle = 'rgb('+r.toString()+','+g.toString()+',0)';
+				ctx.strokeStyle = 'rgb('+r.toString()+','+g.toString()+',0)'; // Red-green fade
 				ctx.moveTo(i,200);
 				ctx.lineTo(i,400-0.4*(score-1000));
 				ctx.stroke();
@@ -138,25 +103,21 @@
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 					ratings = JSON.parse("[" + xhr.response + "]")[0];
-					bsrc = drawCanvas(ratings)
-					bimg.src=bsrc
+					Csrc = drawCanvas(ratings)
+					Cimg.src=Csrc
 				}
 			}
 			xhr.send("");
 		}
-		
-		//drawCanvas()
+
 		getElo()
 	</script>
-	
-	<div class="content">
 
 	<div class="wrapbox">
 	  <div> <h1 id="title" > View NSFW Rankings in Order of Elo Score </h1> </div>
 	  <div class="line-break"></div>
-	  <div id="imgbox"> <img id="simg" width="400" height="400" style="border:2px solid #000000;" src="Assets/plotinfo.svg"> </div>
+	  <div id="imgbox"> <img id="simg" style="border:2px solid #000000;" src="Assets/plotinfo.svg"> </div>
 	  <div id="plotBox"> <canvas id="plot" height="400" style="border:2px solid #000000;" onmousemove="updateImg(event)"></canvas>
-	</div>
 	</div>
 	
 </body>
