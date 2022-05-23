@@ -21,6 +21,13 @@
 	  font-size: 48px;
 	}
 	
+	#title2{
+	  font-family: Sans-Serif;
+	  margin:10;
+	  color: white;
+	  font-size: 24px;
+	}
+	
 	select{
 	  background-color: rgb(75,75,75);
 	  border-radius: 10px;
@@ -29,7 +36,7 @@
 	  border: none;
 	  font-weight: bold;
 	  color: white;
-	  font-size: 48px;
+	  font-size: inherit;
 	}
 	
 	img {
@@ -43,11 +50,25 @@
 	  margin: 0;
 	}
 	
+	#plotBox { position:relative }
+	
 	canvas {
 	  image-rendering: -moz-crisp-edges;
 	  image-rendering: -webkit-crisp-edges;
 	  image-rendering: pixelated;
 	  image-rendering: crisp-edges;
+	  z-index: 1;
+	}
+	
+	#legend{
+		position:absolute;
+		top:-2%;
+		left:3%;
+		color:black;
+		font-family: Sans-Serif;
+		font-size: 24px;
+		font-weight: bold;
+		z-index: 2;
 	}
 	
 	</style>
@@ -74,9 +95,9 @@
 			Zoe: [55,100],
 			Lila: [285,100],
 			Iris: [40,100],
-			Willow: [85,100],
+			Willow: [85,75],
 			Colette: [0,60],
-			Amber: [45,33],
+			Amber: [45,25],
 			Claire: [250,75],
 			RPG: [0,0],
 			Fate: [300,100]
@@ -97,7 +118,7 @@
 		
 		function drawLine(ctx,x1,y1,x2,y2,color){
 			ctx.fillStyle = color
-			ctx.fillRect(x1,y1,1,y2-y1)
+			ctx.fillRect(x1-0.5,y1,2,y2-y1)
 			/*ctx.beginPath();
 			ctx.strokeStyle = color;
 			ctx.moveTo(x1,y1);
@@ -121,12 +142,15 @@
 			if (paint=='elo') { color = 'rgb(100,100,255)' }
 			else { color = 'black' }
 			drawLine(ctx,x,baseline,x,400-0.4*(ID2Elo[id]-1000),color)
-			ctx.fillStyle = "black"
+			var legendText = "Image: "+id+"<br>"+ID2Char[id]+"<br>Elo: "+ID2Elo[id]
+			if (sort=='elo') { legendText = legendText+"<br>Rank: "+x }
+			document.getElementById("legend").innerHTML = legendText
+			/*ctx.fillStyle = "black"
 			ctx.font = "36px sans-serif";
 			ctx.fillText("Image: "+id.toString(), 20, 40);
 			ctx.fillText(ID2Char[id].toString(), 20, 80);
 			ctx.fillText("Elo: "+ID2Elo[id].toString(), 20, 120);
-			if (sort=='elo') { ctx.fillText("Rank: "+x.toString(), 20, 160);}
+			if (sort=='elo') { ctx.fillText("Rank: "+x.toString(), 20, 160);}*/
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
 		}
@@ -141,6 +165,7 @@
 			
 			dataset = document.getElementById("dataset").value;
 			sort = document.getElementById("order").value;
+			paint = document.getElementById("paint").value;
 			
 			ctx.fillStyle = "white";
 			ctx.fillRect(0, 0, xlim, 400)
@@ -204,8 +229,16 @@
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
 	  <div class="line-break"></div>
+	 
 	  <div id="imgbox"> <img id="simg" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
-	  <div id="plotBox"> <canvas id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></canvas>
+	  <div id="plotBox"> <canvas id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></canvas><h1 id="legend"></h1></div>
+	  
+	  <div class="line-break"></div>
+	  <div style="display: flex; justify-content: center;"> <h1 id="title2"> With 
+		<select id="paint" onchange="drawCanvas()">
+		<option value="elo">Elo Score</option>
+		<option value="char">Character</option>
+		</select> Coloring</h1> </div>
 	</div>
 	
 </body>
