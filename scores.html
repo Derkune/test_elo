@@ -21,16 +21,33 @@
 	  font-size: 48px;
 	}
 	
+	select{
+	  background-color: rgb(75,75,75);
+	  border-radius: 10px;
+	  font-family: Sans-Serif;
+	  text-align: center;
+	  border: none;
+	  font-weight: bold;
+	  color: white;
+	  font-size: 48px;
+	}
+	
 	img {
 	  width: 400px;
 	  height: 400px;
 	  object-fit: contain;
 	}
 	
-	
 	.line-break {
 	  width: 100%;
 	  margin: 0;
+	}
+	
+	canvas {
+	  image-rendering: -moz-crisp-edges;
+	  image-rendering: -webkit-crisp-edges;
+	  image-rendering: pixelated;
+	  image-rendering: crisp-edges;
 	}
 	
 	</style>
@@ -40,9 +57,54 @@
 	<script> 
 		
 		var Csrc = 0;
-		var ratings = 0;
 		var Cimg = new Image();
+		var ID2Elo = [0]; //Leading zero because IDs start at 1
+		var ID2Char = [0]
+		var Rank2ID = [];
 		var xlim;
+		var sort = 'elo';
+		var dataset = 'global';
+		var paint = 'elo';
+		var CharRank = [];
+		var baseline = 200;
+		
+		var charColors = { //Note H,S in HSL
+			Chloe: [215,100],
+			Albino: [10,100],
+			Zoe: [55,100],
+			Lila: [285,100],
+			Iris: [40,100],
+			Willow: [85,100],
+			Colette: [0,60],
+			Amber: [45,33],
+			Claire: [250,75],
+			RPG: [0,0],
+			Fate: [300,100]
+		}
+			
+		
+		function charSort(){
+			var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate']
+			var groups = [[],[],[],[],[],[],[],[],[],[],[]]
+			for (var i = 0; i < xlim; i++) {
+				var id = Rank2ID[i]
+				group = chars.indexOf(ID2Char[id].split(':')[0])
+				groups[group].push(id)
+			}
+			for (var i = 0; i < groups.length; i++) { CharRank.push.apply(CharRank,groups[i]) }
+			console.log(CharRank)
+		}
+		
+		function drawLine(ctx,x1,y1,x2,y2,color){
+			ctx.fillStyle = color
+			ctx.fillRect(x1,y1,1,y2-y1)
+			/*ctx.beginPath();
+			ctx.strokeStyle = color;
+			ctx.moveTo(x1,y1);
+			ctx.lineTo(x2,y2);
+			ctx.stroke();
+			ctx.closePath();*/
+		}
 		
 		function updateImg(e){
 			if (Csrc == 0) { return 0 } // Check if canvas is drawn yet
@@ -52,59 +114,76 @@
 			var x = Math.floor(e.clientX - rect.left)
 			if (x<0 || x>=xlim) { return } // Check mouse is inside canvas
 			ctx.drawImage(Cimg,0,0);
-			var rating = ratings[x];
-			ctx.beginPath(); // Draw the blue indicator line
-			ctx.strokeStyle = 'rgb(100,100,255)';
-			ctx.lineWidth = 2;
-			ctx.moveTo(x,200);
-			ctx.lineTo(x,400-0.4*(rating[1]-1000));
-			ctx.stroke();
-			ctx.closePath();
+			if (sort=='num') { x=x+1; id=x } 
+			else if (sort=='elo') { var id = Rank2ID[x]; }
+			else { var id = CharRank[x] }
+			ctx.lineWidth = 1;
+			if (paint=='elo') { color = 'rgb(100,100,255)' }
+			else { color = 'black' }
+			drawLine(ctx,x,baseline,x,400-0.4*(ID2Elo[id]-1000),color)
 			ctx.fillStyle = "black"
-			ctx.font = "48px sans-serif";
-			ctx.fillText("Image: "+rating[0].toString(), 20, 50);
-			ctx.fillText("Elo: "+rating[1].toString(), 20, 100);
-			ctx.fillText("Rank: "+x.toString(), 20, 150);
+			ctx.font = "36px sans-serif";
+			ctx.fillText("Image: "+id.toString(), 20, 40);
+			ctx.fillText(ID2Char[id].toString(), 20, 80);
+			ctx.fillText("Elo: "+ID2Elo[id].toString(), 20, 120);
+			if (sort=='elo') { ctx.fillText("Rank: "+x.toString(), 20, 160);}
 			var simg = document.getElementById("simg"); // Update selection image
-			simg.src='Images/'+rating[0].toString().padStart(3,'0')+'.jpg';
+			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
 		}
 		
-		function drawCanvas(ratings){
-			xlim = ratings.length
+		function drawCanvas(){
+			Csrc = 0
+			xlim = Rank2ID.length
 			console.log(xlim)
 			var c = document.getElementById("plot");
 			c.width = xlim;
 			var ctx = c.getContext("2d");
 			
+			dataset = document.getElementById("dataset").value;
+			sort = document.getElementById("order").value;
+			
 			ctx.fillStyle = "white";
 			ctx.fillRect(0, 0, xlim, 400)
+			ctx.lineWidth = 1;
 			
 			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
-				var score = ratings[i][1];
+				if (sort=='char') { var id = CharRank[i] }
+				else { var id = Rank2ID[i] }
+				var score = ID2Elo[id];
 				var r=0;
 				var g=0;
 				if (score>1500){ r = 10*Math.sqrt(score-1500) }
 				else { g = 10*Math.sqrt(1500-score) }
-				ctx.beginPath();
-				ctx.strokeStyle = 'rgb('+r.toString()+','+g.toString()+',0)'; // Red-green fade
-				ctx.moveTo(i,200);
-				ctx.lineTo(i,400-0.4*(score-1000));
-				ctx.stroke();
-				ctx.closePath();
+				baseline = 200
+				if (sort=='num'){ i = id }
+				if (paint=='elo') { color = 'rgb('+r.toString()+','+g.toString()+',0)' }
+				else {
+					Char = ID2Char[id];
+					charColor = charColors[Char.split(':')[0]];
+					color = 'hsl('+charColor[0]+','+charColor[1]+'%,50%)'
+					console.log(color)
+					baseline = 400
+				}
+				drawLine(ctx,i,baseline,i,400-0.4*(score-1000),color) // Red-green fade
 			}
-			return c.toDataURL()
+			Csrc=c.toDataURL()
+			Cimg.src=Csrc
 		}
 		
 		function getElo(){
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-					ratings = JSON.parse("[" + xhr.response + "]")[0];
-					Csrc = drawCanvas(ratings)
-					Cimg.src=Csrc
+					var ratings = JSON.parse("[" + xhr.response + "]")[0];
+					for (var i = 0; i < ratings.length; i++) {
+						ID2Elo.push(ratings[i][0]);
+						ID2Char.push(ratings[i][1]);
+						Rank2ID.push(ratings[i][2]);
+					}
+					drawCanvas()
+					charSort()
 				}
 			}
 			xhr.send("");
@@ -114,7 +193,16 @@
 	</script>
 
 	<div class="wrapbox">
-	  <div> <h1 id="title" > View Rankings in Order of Elo Score </h1> </div>
+	  <div> <h1 id="title" > View 
+		<select id="dataset" onchange="drawCanvas()">
+		<option value="global">Global</option>
+		<option value="nsfw">NSFW</option>
+		</select> Ranking in 
+		<select id="order" onchange="drawCanvas()">
+		<option value="elo">Elo Score</option>
+		<option value="num">Image</option>
+		<option value="char">Character</option>
+		</select> Order </h1> </div>
 	  <div class="line-break"></div>
 	  <div id="imgbox"> <img id="simg" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
 	  <div id="plotBox"> <canvas id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></canvas>

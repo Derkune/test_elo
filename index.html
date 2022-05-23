@@ -1,34 +1,21 @@
 <html>
 <head>
 	<style>
-	.imgbox {
-	  display: flex;
-	  flex-wrap: wrap;
-	  justify-content: center;
-	}
 
-	.imgbox > div {
-	  background-color: rgba(255, 100, 50, 0.7);
-	  width: 410px;
-	  height: 450px;
-	  margin: 20px;
-	  text-align: center;
-	  line-height: 75px;
-	  font-size: 30px;
-	  padding: 5px 0;
-	}
-	
-	.imgbox> div:hover {
-	  background-color: rgba(100, 255, 50, 0.7);
-	  transition: 0.2s;
-	}
-	
 	#title{
 	  font-family: Sans-Serif;
 	  text-align: center;
 	  margin:0;
 	  color: white;
 	  font-size: 72px;
+	}
+	
+	#desc{
+	  font-family: Sans-Serif;
+	  text-align: center;
+	  margin:0;
+	  color: white;
+	  font-size: 24px;
 	}
 	
 	#infotitle{
@@ -39,7 +26,6 @@
 		font-size: 48px;
 	}
 	
-	
 	#info{
 	  position: fixed;
 	  height: 100%;
@@ -47,24 +33,13 @@
 	  justify-content: center;
 	  background-color: rgba(50, 50, 50, 0.98);
 	  z-index: 10;
+	  visibility: hidden;
 	}
 	
 	#info.fade{
 		transition: 1s;
 		opacity: 0;
 		visibility: hidden;
-	}
-	
-	.bg-image{
-	  background-image: url("Assets/Season1.jpg");
-	  filter: blur(1.5px);
-	  -webkit-filter: blur(1.5px);
-	  height: 100%; 
-	  background-position: center;
-	  background-attachment: fixed;
-	  background-repeat: no-repeat;
-	  background-size: cover;
-	  z-index: 1;
 	}
 	
 	.content {
@@ -77,10 +52,64 @@
 	  justify-content: center;
 	}
 	
+	.wrapbox {
+	  display: flex;
+	  position:relative;
+	  flex-wrap: wrap;
+	  justify-content: center;
+	}
+
+	.imgbox {
+	  display: flex;
+	  background-color: rgb(238,62,84);
+	  flex-wrap: wrap;
+	  width: 400px;
+	  margin: 15 20px;
+	  padding: 10 10;
+	  text-align: center;
+	  justify-content: center;
+	  border-radius: 10px;
+	}
+	
+	.imgbox:hover {
+	  background-color: rgb(147,188,57);
+	  transition: 0.2s;
+	}
+
 	img {
 	  width: 400px;
 	  height: 400px;
 	  object-fit: contain;
+	}
+	
+	.imgdesc{
+		position:relative;
+		font-family: Sans-Serif;
+		font-size: 22px;
+		top:5;
+		margin:0 10;
+	}
+	
+	.select {
+	  background-color: rgb(238,62,84);
+	  border: none;
+	  color: black;
+	  margin: 15 20px;
+	  padding: 15px 32px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 16px;
+	  border-radius: 10px;
+	  font-family: Sans-Serif;
+	  font-weight: bold;
+	  font-size: 36px;
+	  width: 190px;
+	}
+	
+	.select:hover {
+	  background-color: rgb(147,188,57);
+	  transition: 0.2s;
 	}
 	
 	.keypadbox {
@@ -94,9 +123,13 @@
 	  text-align: center;
 	  margin:0;
 	  color: white;
-	  font-size: 22px;
+	  font-size: 23px;
 	}
-		
+	
+	.line-break {
+	  width: 100%;
+	  margin: 0;
+	}
 	
 	</style>
 	
@@ -116,16 +149,26 @@
 	var images = [];
 	var imgids = [];
 	var index = 0;
-	var ratings = 0;
+	var ID2Elo = [0]; //Leading zero because IDs start at 1
+	var ID2Char = [0]
+	var Rank2ID = [];
 	
 	function getElo(){
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-					ratings = JSON.parse("[" + xhr.response + "]")[0];
+					var ratings = JSON.parse("[" + xhr.response + "]")[0];
+					for (var i = 0; i < ratings.length; i++) {
+						ID2Elo.push(ratings[i][0]);
+						ID2Char.push(ratings[i][1]);
+						Rank2ID.push(ratings[i][2]);
+					}
+					document.getElementById("eloA").innerHTML = 'Elo: '+ID2Elo[imgids[index]];
+					document.getElementById("eloB").innerHTML = 'Elo: '+ID2Elo[imgids[index+1]];
+					document.getElementById("charA").innerHTML = ID2Char[imgids[index]];
+					document.getElementById("charB").innerHTML = ID2Char[imgids[index+1]];
 				}
 			}
 			xhr.send("");
@@ -134,8 +177,8 @@
 	getElo()
 	
 	function getPairID(){
-		if (ratings==0) { return getRandomID(1,680,2)}
-		var max = ratings.length
+		if (Rank2ID.length==0) { return getRandomID(1,680,2)}
+		var max = Rank2ID.length
 		var shift = 0;
 		var flag = 1;
 		var search = 10
@@ -146,13 +189,14 @@
 			var b = a + d
 			if (b<0){ b=0 } // Clip ends, note this increases prob of ends in pair
 			if (b>max+shift) { b=max+shift }
-			if(imgids.indexOf(ratings[a][0]) === -1 && imgids.indexOf(ratings[b][0]) === -1){ flag = 0 }
+			if(imgids.indexOf(Rank2ID[a]) === -1 && imgids.indexOf(Rank2ID[b]) === -1){ flag = 0 }
 		}
 		console.log('Load Rankings:',a,b)
-		return [ratings[a][0],ratings[b][0]]
+		return [Rank2ID[a],Rank2ID[b]]
 	}
 	
 	function getRandomID(min,max,len) {
+		//return [592,586] //Force first set to test
 		var arr = [];
 		while(arr.length < len){
 			var r = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -193,23 +237,26 @@
 	
 	<!--<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.5);">-->
 	<h1 id="title">Elo Rate Chloe Pics</h1>
+	<p id="desc"> Choose the one that you prefer / like better / want to see more of </p>
 	<!--</div>-->
 
-	<div class="imgbox">
-	  <div id="A" onclick="send('A');next()"> <img id="imgA"> </div>
-	  <div id="B" onclick="send('B');next()"> <img id="imgB"> </div>
+	<div class="wrapbox">
+	  <div class="imgbox" onclick="send('A');next()"> <img id="imgA"> <h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4> <h4 id="eloA" class="imgdesc">Elo: Loading</h4> </div>
+	  <div class="imgbox" onclick="send('B');next()"> <img id="imgB"> <h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4> <h4 id="eloB" class="imgdesc">Elo: Loading</h4> </div>
+	  <div class="line-break"></div>
+	  <input type="button" class="select" value="= Tie =" onclick="send('T');next()">
+	  <input type="button" class="select" value="< Skip >" onclick="next()">
 	</div>
 	
 	<script type="text/javascript">
-	  window.addEventListener("keydown", keylog)
-	  function keylog(e){
-		if (e.key=='a'){ send('A');next() }
-		if (e.key=='d'){ send('B');next() }
-		if (e.key=='w'){ send('T');next() }
-		if (e.key=='s'){ next() }
-	  }
-	</script>
-	<script> 
+		window.addEventListener("keydown", keylog)
+		function keylog(e){
+			if (e.key=='a'){ send('A');next() }
+			if (e.key=='d'){ send('B');next() }
+			if (e.key=='w'){ send('T');next() }
+			if (e.key=='s'){ next() }
+		}
+	  
 		var a = 100
 		var b = 200
 		var prepair
@@ -226,8 +273,16 @@
 			imgids=imgids.concat(prepair)
 			document.getElementById("imgA").src = images[index].src;
 			document.getElementById("imgB").src = images[index+1].src;
+			document.getElementById("idA").innerHTML = '# '+imgids[index];
+			document.getElementById("idB").innerHTML = '# '+imgids[index+1];
 			document.getElementById("imgA").alt = images[index].src;
 			document.getElementById("imgB").alt = images[index+1].src;
+			if (Rank2ID.length>0){
+				document.getElementById("charA").innerHTML = ID2Char[imgids[index]];
+				document.getElementById("charB").innerHTML = ID2Char[imgids[index+1]];
+				document.getElementById("eloA").innerHTML = 'Elo: '+ID2Elo[imgids[index]];
+				document.getElementById("eloB").innerHTML = 'Elo: '+ID2Elo[imgids[index+1]];
+			}
 			preloadImages(prepair,images,noop);
 		}
 		
@@ -256,8 +311,8 @@
 	
 	
 	<div id="info" onclick="clearinfo()">
-	  <h1 id="infotitle"> Instructions for Usage </h1>
-	  <p class='infotext'> This webapp shows two images of Chloe for you to compare.<br>Choose the one that you prefer / like better / want to see more of.<br><br> You can click on the image or use the keypad as shown below.<br>If you can't decide, you can tie them or skip to the next pair.</p> 
+	  <h1 id="infotitle"> Instructions </h1>
+	  <p class='infotext'> <br>This webapp shows two images of Chloe for you to compare.<br>Choose the one that you prefer / like better / want to see more of.<br><br> You can click on the image or use the keypad as shown below.<br>If you can't decide, you can tie them or skip to the next pair.</p> 
 	  <div class="keypadbox"><img src="Assets/keypadNB.svg" style="vertical-align:middle"></div>
 	</div>
 	
