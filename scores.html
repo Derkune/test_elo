@@ -1,4 +1,5 @@
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
 	<style>
 	.wrapbox {
@@ -52,13 +53,7 @@
 	
 	#plotBox { position:relative }
 	
-	canvas {
-	  image-rendering: -moz-crisp-edges;
-	  image-rendering: -webkit-crisp-edges;
-	  image-rendering: pixelated;
-	  image-rendering: crisp-edges;
-	  z-index: 1;
-	}
+	svg { transform: translate(0, 0);}
 	
 	#legend{
 		position:absolute;
@@ -68,26 +63,65 @@
 		font-family: Sans-Serif;
 		font-size: 24px;
 		font-weight: bold;
-		z-index: 2;
+		z-index: 10;
 	}
+	
+	.sidebar { width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
+	
+	#menucheck:checked~#scorelink { top:100; transition: 0.15s linear; }
+	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
 	</style>
 </head>
 
 <body style="background-color:#000000;">
+	
+	<input type="checkbox" id="menucheck" style="display:none;"/>
+	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
+	
+	<img id='scorelink' class='sidebar' onclick="navRank()" src='Assets/ranklink.svg'></img>
+	<!--<img id='other' class='sidebar' src='Assets/menu.svg'></img>-->
+	
+	<div class="wrapbox">
+	  <div> <h1 id="title" > View 
+		<select id="dataset" onchange="drawCanvas()">
+		<!--<option value="global">Global</option>-->
+		<option value="nsfw">NSFW</option>
+		</select> Ranking in 
+		<select id="order" onchange="drawCanvas()">
+		<option value="elo">Elo Score</option>
+		<option value="num">Image</option>
+		<option value="char">Character</option>
+		</select> Order </h1> </div>
+	  <div class="line-break"></div>
+	 
+	  <div id="imgbox"> <img id="simg" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
+	  <div id="plotBox"> <h1 id="legend"></h1><svg id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
+	  
+	  <div class="line-break"></div>
+	  <div style="display: flex; justify-content: center;"> <h1 id="title2"> With 
+		<select id="paint" onchange="drawCanvas()">
+		<option value="elo">Elo Score</option>
+		<option value="char">Character</option>
+		<option value="type">Char:Type</option>
+		</select> Coloring</h1> </div>
+	</div>
+
 	<script> 
 		
-		var Csrc = 0;
-		var Cimg = new Image();
 		var ID2Elo = [0]; //Leading zero because IDs start at 1
 		var ID2Char = [0]
 		var Rank2ID = [];
-		var xlim;
+		var xlim = 0;
 		var sort = 'elo';
 		var dataset = 'global';
 		var paint = 'elo';
 		var CharRank = [];
 		var baseline = 200;
+		var plot = document.getElementById('plot')
+		//var plot0 = plot.cloneNode(true)
+		
+		function navRank() {window.open('index.html');}
 		
 		var charColors = { //Note H,S in HSL
 			Chloe: [215,100],
@@ -113,70 +147,66 @@
 				groups[group].push(id)
 			}
 			for (var i = 0; i < groups.length; i++) { CharRank.push.apply(CharRank,groups[i]) }
-			console.log(CharRank)
 		}
 		
-		function drawLine(ctx,x1,y1,x2,y2,color){
-			ctx.fillStyle = color
-			ctx.fillRect(x1-0.5,y1,2,y2-y1)
-			/*ctx.beginPath();
-			ctx.strokeStyle = color;
-			ctx.moveTo(x1,y1);
-			ctx.lineTo(x2,y2);
-			ctx.stroke();
-			ctx.closePath();*/
+		function drawLine(plot,x,y1,y2,color){
+			let rect = document.createElementNS( "http://www.w3.org/2000/svg",'rect' );
+			rect.setAttribute('class','bar');
+			rect.setAttributeNS( null,'x',x-0.5 );
+			rect.setAttributeNS( null,'width','2' );
+			if (y2>y1){
+				rect.setAttributeNS( null,'y',y1 );
+				rect.setAttributeNS( null,'height',y2-y1 ); }
+			else {
+				rect.setAttributeNS( null,'y',y2 );
+				rect.setAttributeNS( null,'height',y1-y2 );	}			
+			rect.setAttributeNS( null,'fill',color);
+			rect.setAttributeNS( null,'stroke','none');
+			plot.appendChild(rect)
 		}
 		
 		function updateImg(e){
-			if (Csrc == 0) { return 0 } // Check if canvas is drawn yet
-			var c = document.getElementById("plot");
-			var rect = c.getBoundingClientRect()
-			var ctx = c.getContext("2d");
-			var x = Math.floor(e.clientX - rect.left)
+			if (plot.lastChild == null) { return 0 } // Check if canvas is drawn yet 
+			var x = Math.floor(e.clientX - plot.getBoundingClientRect().left)
 			if (x<0 || x>=xlim) { return } // Check mouse is inside canvas
-			ctx.drawImage(Cimg,0,0);
 			if (sort=='num') { x=x+1; id=x } 
 			else if (sort=='elo') { var id = Rank2ID[x]; }
 			else { var id = CharRank[x] }
-			ctx.lineWidth = 1;
 			if (paint=='elo') { color = 'rgb(100,100,255)' }
 			else { color = 'black' }
-			drawLine(ctx,x,baseline,x,400-0.4*(ID2Elo[id]-1000),color)
+			plot.removeChild(plot.lastChild) // Remove last indicator
+			drawLine(plot,x,baseline,400-0.4*(ID2Elo[id]-1000),color)
 			var legendText = "Image: "+id+"<br>"+ID2Char[id]+"<br>Elo: "+ID2Elo[id]
 			if (sort=='elo') { legendText = legendText+"<br>Rank: "+x }
 			document.getElementById("legend").innerHTML = legendText
-			/*ctx.fillStyle = "black"
-			ctx.font = "36px sans-serif";
-			ctx.fillText("Image: "+id.toString(), 20, 40);
-			ctx.fillText(ID2Char[id].toString(), 20, 80);
-			ctx.fillText("Elo: "+ID2Elo[id].toString(), 20, 120);
-			if (sort=='elo') { ctx.fillText("Rank: "+x.toString(), 20, 160);}*/
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
 		}
 		
 		function drawCanvas(){
-			Csrc = 0
 			xlim = Rank2ID.length
-			console.log(xlim)
-			var c = document.getElementById("plot");
-			c.width = xlim;
-			var ctx = c.getContext("2d");
+			plot.setAttribute('width',xlim)
+			while (plot.lastChild) {
+				plot.removeChild(plot.lastChild);
+			}
+			//plot = plot0.cloneNode(true); //Yeah this works but doesn't display...
 			
 			dataset = document.getElementById("dataset").value;
 			sort = document.getElementById("order").value;
 			paint = document.getElementById("paint").value;
 			
-			ctx.fillStyle = "white";
-			ctx.fillRect(0, 0, xlim, 400)
-			ctx.lineWidth = 1;
+			let rect = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
+			rect.setAttributeNS( null,'width',"100%");
+			rect.setAttributeNS( null,'height',"100%");		
+			rect.setAttributeNS( null,'fill','white');
+			plot.appendChild(rect)
 			
 			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
 				if (sort=='char') { var id = CharRank[i] }
 				else { var id = Rank2ID[i] }
-				var score = ID2Elo[id];
-				var r=0;
-				var g=0;
+				let score = ID2Elo[id];
+				let r=0;
+				let g=0;
 				if (score>1500){ r = 10*Math.sqrt(score-1500) }
 				else { g = 10*Math.sqrt(1500-score) }
 				baseline = 200
@@ -185,14 +215,19 @@
 				else {
 					Char = ID2Char[id];
 					charColor = charColors[Char.split(':')[0]];
-					color = 'hsl('+charColor[0]+','+charColor[1]+'%,50%)'
-					console.log(color)
+					let L=50;
+					if (paint=='type'){
+						let type = ID2Char[id].split(':')
+						type = type[type.length-1]
+						if (type=='Cat') { L=L-20 }
+						if (type=='Cosplay') { L=L+20 }
+					}
+					color = 'hsl('+charColor[0]+','+charColor[1]+'%,'+L+'%)'
 					baseline = 400
 				}
-				drawLine(ctx,i,baseline,i,400-0.4*(score-1000),color) // Red-green fade
+				drawLine(plot,i,baseline,400-0.4*(score-1000),color) // Red-green fade
 			}
-			Csrc=c.toDataURL()
-			Cimg.src=Csrc
+			drawLine(plot,0,0,0,'white') // Placeholder for indicator removal
 		}
 		
 		function getElo(){
@@ -207,6 +242,7 @@
 						ID2Char.push(ratings[i][1]);
 						Rank2ID.push(ratings[i][2]);
 					}
+					
 					drawCanvas()
 					charSort()
 				}
@@ -217,29 +253,7 @@
 		getElo()
 	</script>
 
-	<div class="wrapbox">
-	  <div> <h1 id="title" > View 
-		<select id="dataset" onchange="drawCanvas()">
-		<option value="global">Global</option>
-		<option value="nsfw">NSFW</option>
-		</select> Ranking in 
-		<select id="order" onchange="drawCanvas()">
-		<option value="elo">Elo Score</option>
-		<option value="num">Image</option>
-		<option value="char">Character</option>
-		</select> Order </h1> </div>
-	  <div class="line-break"></div>
-	 
-	  <div id="imgbox"> <img id="simg" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
-	  <div id="plotBox"> <canvas id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></canvas><h1 id="legend"></h1></div>
-	  
-	  <div class="line-break"></div>
-	  <div style="display: flex; justify-content: center;"> <h1 id="title2"> With 
-		<select id="paint" onchange="drawCanvas()">
-		<option value="elo">Elo Score</option>
-		<option value="char">Character</option>
-		</select> Coloring</h1> </div>
-	</div>
+
 	
 </body>
 </html>
