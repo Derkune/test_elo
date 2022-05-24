@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="175 175 150 154.329" width="150" height="154.329" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="100" y1="250" x2="100" y2="300" id="gradient-0" spreadMethod="pad" gradientTransform="matrix(0.0081, 0.999966, -3.723474, 0.000215, 1079.752686, 149.867157)">
+      <stop offset="0" style="stop-color: rgb(255, 255, 255);"/>
+      <stop offset="1" style="stop-color: rgb(55, 255, 0);"/>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="100" y1="250" x2="100" y2="300" id="gradient-1" spreadMethod="pad" gradientTransform="matrix(0.011267, 0.999936, -2.936769, 0.009471, 982.759766, 97.555923)">
+      <stop offset="0" style="stop-color: rgb(255, 255, 255);"/>
+      <stop offset="1" style="stop-color: rgb(255, 0, 0);"/>
+    </linearGradient>
+  </defs>
+  <rect x="175" y="175" width="150" height="150" style="fill: none;"/>
+  <rect style="paint-order: fill; stroke: rgb(255, 255, 255); stroke-width: 5px;" x="200" y="200" width="100" height="100" rx="20" ry="20"/>
+  <text style="fill: rgb(255, 255, 255); font-family: Arial, sans-serif; font-size: 24px; white-space: pre;" x="187.973" y="324.288">See Scores</text>
+  <polyline style="fill: none; stroke: rgb(255, 255, 255); stroke-width: 2px;" points="219.172 214.971 219.172 280.828 285.029 280.828"/>
+  <g transform="matrix(0.275341, 0, 0, 0.47859, 210.79917, 128.252308)" style="">
+    <polyline style="fill: url(#gradient-0);" points="50 250 50 300 150 250"/>
+    <polyline style="fill: url(#gradient-1);" points="150 200 150 250 250 200" transform="matrix(-1, 0, 0, -1, 400, 450)"/>
+  </g>
+</svg>

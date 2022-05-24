@@ -1,4 +1,5 @@
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
 	<style>
 
@@ -23,7 +24,7 @@
 	  text-align: center;
 	  margin:10;
 	  color: white;
-		font-size: 48px;
+	  font-size: 48px;
 	}
 	
 	#info{
@@ -126,11 +127,15 @@
 	  font-size: 23px;
 	}
 	
-	.line-break {
-	  width: 100%;
-	  margin: 0;
-	}
+	.line-break { width: 100%; margin: 0; }
+
+	.sidebar { width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
 	
+	#menucheck:checked~#scorelink { top:100; transition: 0.15s linear; }
+	#menucheck:checked~#elotoggle { top:200; transition: 0.3s linear; }
+	#menucheck:checked~#other { top:300; transition: 0.45s linear; }
+	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
+		
 	</style>
 	
 	<script>
@@ -233,16 +238,26 @@
 
 <body style="background-color:#000000;">
 	
-	<div class="content">
+	<h1 id='counter' style="color:white;font-family:Sans-Serif; font-size:24; position:fixed; top:0; left:10; z-index:8">Counter: 0</h1>
 	
+	<input type="checkbox" id="menucheck" style="display:none;"/>
+	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
+	
+	<img id='scorelink' class='sidebar' onclick="navScores()" src='Assets/scorelink.svg'></img>
+	<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'></img>
+	<!--<img id='other' class='sidebar' src='Assets/menu.svg'></img>-->
+	
+	
+	
+	<div class="content">
 	<!--<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.5);">-->
 	<h1 id="title">Elo Rate Chloe Pics</h1>
 	<p id="desc"> Choose the one that you prefer / like better / want to see more of </p>
 	<!--</div>-->
 
 	<div class="wrapbox">
-	  <div class="imgbox" onclick="send('A');next()"> <img id="imgA"> <h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4> <h4 id="eloA" class="imgdesc">Elo: Loading</h4> </div>
-	  <div class="imgbox" onclick="send('B');next()"> <img id="imgB"> <h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4> <h4 id="eloB" class="imgdesc">Elo: Loading</h4> </div>
+	  <div class="imgbox" onclick="send('A');next()"> <img id="imgA"> <h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4> <h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
+	  <div class="imgbox" onclick="send('B');next()"> <img id="imgB"> <h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4> <h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
 	  <div class="line-break"></div>
 	  <input type="button" class="select" value="= Tie =" onclick="send('T');next()">
 	  <input type="button" class="select" value="< Skip >" onclick="next()">
@@ -256,10 +271,20 @@
 			if (e.key=='w'){ send('T');next() }
 			if (e.key=='s'){ next() }
 		}
+		
+		var elovis = false
+		function eloToggle() {
+			if (elovis) { document.getElementById("eloA").style.display = 'none'; document.getElementById("eloB").style.display = 'none' }
+			else { document.getElementById("eloA").style.display = 'block'; document.getElementById("eloB").style.display = 'block' }
+			elovis = !elovis
+		}
+		
+		function navScores() {window.open('scores.html');}
 	  
-		var a = 100
-		var b = 200
-		var prepair
+		var a = 100;
+		var b = 200;
+		var prepair;
+		var count = -1;
 		index = -2
 		
 		function next(){
@@ -299,6 +324,8 @@
 				}
 			}
 			xhr.send("a="+imgids[index]+"&b="+imgids[index+1]+"&r="+r+"&uid="+uid);
+			count = count + 1;
+			document.getElementById("counter").innerHTML = 'Counter '+count;
 		}
 	</script>
 	</div>
