@@ -70,14 +70,24 @@
 	  display: flex;
 	  position:relative;
 	  flex-wrap: wrap;
-	  width: 400px;
-	  margin: 30 40px;
+	  width: 456px;
+	  height: 456px;
+	  margin: 30 20 0 20px;
 	  text-align: center;
 	  justify-content: center;
 	  border-radius: 10px;
 	}
 
 	img { object-fit: contain; }
+	
+	@keyframes crossin {
+		0%	{opacity: 1;}
+		100%{opacity: 0;}
+		100%{display:none;}
+	}
+	
+	.fade { animation-name: crossin; animation-duration:0.5s; animation-fill-mode: forwards; }
+	.show { display:block; }	
 	
 	#greenA:not(:hover) { opacity:0; transition:0.5s; }
 	#greenA:hover { opacity:1; transition:0.5s; }
@@ -90,8 +100,9 @@
 		letter-spacing: 1px;
 		color:white;
 		font-size: 18;
-		top:-450;
+		top:-50;
 		margin:0 10;
+		z-index:0;
 	}
 	
 	.keypadbox {
@@ -240,16 +251,18 @@
 	<!--</div>-->
 
 	<div class="wrapbox">
-	  <div class="imgbox" onclick="send('A');next()">
-		<img id="imgA" width=400 height=400>
-		<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index=2'>
-		<img id='greenA' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index=3'>
+	  <div class="imgbox" onclick="send('A');next()" >
+		<img id="imgA" width=400 height=400 style="position:absolute;z-index:1;">
+		<img id="fadeA" class='fade' width=400 height=400 style="position:absolute; z-index:2">
+		<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
+		<img id='greenA' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 		<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
 		<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
 	  <div class="imgbox" onclick="send('B');next()">
-		<img id="imgB" width=400 height=400>
-		<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index=2'>
-		<img id='greenB' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index=3'>
+		<img id="imgB" width=400 height=400 style="position:absolute;">
+		<img id="fadeB" class='fade' width=400 height=400 style="position:absolute; z-index:2">
+		<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
+		<img id='greenB' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 		<h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4>
 		<h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
 	  <div class="line-break"></div>
@@ -316,10 +329,10 @@
 	<script type="text/javascript">
 		window.addEventListener("keyup", keylog)
 		function keylog(e){
-			if (e.key=='a'){ send('A');next() }
-			if (e.key=='d'){ send('B');next() }
-			if (e.key=='w'){ send('T');next() }
-			if (e.key=='s'){ next() }
+			if (e.key=='a'||e.keyCode == '37'){ send('A');next() }
+			if (e.key=='d'||e.keyCode == '39'){ send('B');next() }
+			if (e.key=='w'||e.keyCode == '38'){ send('T');next() }
+			if (e.key=='s'||e.keyCode == '40'){ next() }
 		}
 		
 		var elovis = false;
@@ -378,6 +391,11 @@
 			}
 			prepair=getPairID();
 			imgids=imgids.concat(prepair)
+			if (count) {
+				document.getElementById("fadeA").src = document.getElementById("imgA").src;
+				document.getElementById("fadeB").src = document.getElementById("imgB").src;
+				document.getElementById("fadeA").className = 'show'; document.getElementById("fadeB").className = 'show';
+				setTimeout(function(){ document.getElementById("fadeA").className='fade'; document.getElementById("fadeB").className='fade'; }, 10); }
 			document.getElementById("imgA").src = images[index].src;
 			document.getElementById("imgB").src = images[index+1].src;
 			document.getElementById("idA").innerHTML = '# '+imgids[index];
