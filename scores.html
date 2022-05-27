@@ -85,7 +85,7 @@
 	<div class="wrapbox">
 	  <div> <h1 id="title" > View 
 		<select id="dataset" onchange="drawCanvas()">
-		<!--<option value="global">Global</option>-->
+		<option value="user">User</option>
 		<option value="nsfw">NSFW</option>
 		</select> Ranking in 
 		<select id="order" onchange="drawCanvas()">
@@ -112,9 +112,10 @@
 		var ID2Elo = [0]; //Leading zero because IDs start at 1
 		var ID2Char = [0]
 		var Rank2ID = [];
+		var storage = [[],[]]
 		var xlim = 0;
 		var sort = 'elo';
-		var dataset = 'global';
+		var dataset = 'user';
 		var paint = 'elo';
 		var CharRank = [];
 		var baseline = 200;
@@ -139,8 +140,9 @@
 			
 		
 		function charSort(){
-			var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate']
-			var groups = [[],[],[],[],[],[],[],[],[],[],[]]
+			var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
+			var groups = [[],[],[],[],[],[],[],[],[],[],[]];
+			CharRank = [];
 			for (var i = 0; i < xlim; i++) {
 				var id = Rank2ID[i]
 				group = chars.indexOf(ID2Char[id].split(':')[0])
@@ -184,16 +186,21 @@
 		}
 		
 		function drawCanvas(){
-			xlim = Rank2ID.length
-			plot.setAttribute('width',xlim)
 			while (plot.lastChild) {
 				plot.removeChild(plot.lastChild);
 			}
 			//plot = plot0.cloneNode(true); //Yeah this works but doesn't display...
 			
-			dataset = document.getElementById("dataset").value;
 			sort = document.getElementById("order").value;
 			paint = document.getElementById("paint").value;
+			if (dataset != document.getElementById("dataset").value) {
+				document.getElementById("legend").innerHTML = 'Loading...'
+				dataset = document.getElementById("dataset").value;
+				if (dataset=='user') { getElo(0); }
+				if (dataset=='nsfw') { getElo(1); }
+			}
+			xlim = Rank2ID.length
+			plot.setAttribute('width',xlim)
 			
 			let rect = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
 			rect.setAttributeNS( null,'width',"100%");
@@ -209,8 +216,9 @@
 				let g=0;
 				if (score>1500){ r = 10*Math.sqrt(score-1500) }
 				else { g = 10*Math.sqrt(1500-score) }
+				x=i
 				baseline = 200
-				if (sort=='num'){ i = id }
+				if (sort=='num'){ x = id }
 				if (paint=='elo') { color = 'rgb('+r.toString()+','+g.toString()+',0)' }
 				else {
 					Char = ID2Char[id];
@@ -225,32 +233,39 @@
 					color = 'hsl('+charColor[0]+','+charColor[1]+'%,'+L+'%)'
 					baseline = 400
 				}
-				drawLine(plot,i,baseline,400-0.4*(score-1000),color) // Red-green fade
+				
+				drawLine(plot,x,baseline,400-0.4*(score-1000),color) // Red-green fade
 			}
 			drawLine(plot,0,0,0,'white') // Placeholder for indicator removal
 		}
 		
-		function getElo(){
+		function getElo(type){ // 0 user, 1 nsfw
+			console.log(type)
+			if (storage[type].length) {ID2Elo=storage[type][0]; ID2Char=storage[type][1]; Rank2ID=storage[type][2]; charSort(); return}
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
+			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					ID2Elo=[0]; ID2Char=[0]; Rank2ID=[];
 					var ratings = JSON.parse("[" + xhr.response + "]")[0];
+					console.log(ratings[0][2])
 					for (var i = 0; i < ratings.length; i++) {
 						ID2Elo.push(ratings[i][0]);
 						ID2Char.push(ratings[i][1]);
 						Rank2ID.push(ratings[i][2]);
 					}
-					
+					storage[type][0]=ID2Elo; storage[type][1]=ID2Char; storage[type][2]=Rank2ID;
 					drawCanvas()
+					document.getElementById("legend").innerHTML = 'Loading Complete'
 					charSort()
 				}
 			}
-			xhr.send("");
+			if (type==0){ xhr.send("type=user"); }
+			else if (type==1) { xhr.send("type=nsfw"); }
 		}
 
-		getElo()
+		getElo(0)
 	</script>
 
 

@@ -87,12 +87,10 @@
 	}
 	
 	.fade { animation-name: crossin; animation-duration:0.5s; animation-fill-mode: forwards; }
-	.show { display:block; }	
+	.show { display:block; opacity:1; transition:0.25s; }	
 	
-	#greenA:not(:hover) { opacity:0; transition:0.5s; }
-	#greenA:hover { opacity:1; transition:0.5s; }
-	#greenB:not(:hover) { opacity:0; transition:0.5s; }
-	#greenB:hover { opacity:1; transition:0.5s; }
+	.green:not(:hover) { opacity:0; transition:0.5s; }
+	.green:hover { opacity:1; transition:0.5s; }
 	
 	.imgdesc{
 		position:relative;
@@ -164,7 +162,7 @@
 	
 	function getElo(){
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
+			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -180,7 +178,7 @@
 					document.getElementById("charB").innerHTML = ID2Char[imgids[index+1]];
 				}
 			}
-			xhr.send("");
+			xhr.send("type=user");
 	}
 	
 	getElo()
@@ -200,7 +198,7 @@
 			if (b>max+shift) { b=max+shift }
 			if(imgids.indexOf(Rank2ID[a]) === -1 && imgids.indexOf(Rank2ID[b]) === -1){ flag = 0 }
 		}
-		console.log('Load Rankings:',a,b)
+		console.log('Load Rankings:',a,b,'IDs:',Rank2ID[a],Rank2ID[b])
 		return [Rank2ID[a],Rank2ID[b]]
 	}
 	
@@ -229,7 +227,6 @@
 			};
 			
 			img.src = 'Images/'+ids[i].toString().padStart(3,'0')+'.jpg';
-			console.log(img,ids[i])
 			imgs.push(img);
 		}
 	}
@@ -251,22 +248,22 @@
 	<!--</div>-->
 
 	<div class="wrapbox">
-	  <div class="imgbox" onclick="send('A');next()" >
+	  <div class="imgbox" onclick="append('A');next()" >
 		<img id="imgA" width=400 height=400 style="position:absolute;z-index:1;">
 		<img id="fadeA" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 		<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
-		<img id='greenA' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
+		<img id='greenA' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 		<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
 		<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
-	  <div class="imgbox" onclick="send('B');next()">
+	  <div class="imgbox" onclick="append('B');next()">
 		<img id="imgB" width=400 height=400 style="position:absolute;">
 		<img id="fadeB" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 		<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
-		<img id='greenB' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
+		<img id='greenB' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 		<h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4>
 		<h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
 	  <div class="line-break"></div>
-	  <img id='both' class="select" onclick="send('T');next()" src='Assets/both.png' style='margin: 0 15; z-index=10;'>
+	  <img id='both' class="select" onclick="both()" src='Assets/both.png' style='margin: 0 15; z-index=10;'>
 	  <img id='skip' class="select" onclick="next()" src='Assets/skip.png' style='margin: 0 15; z-index=10;'>
 	</div>
 	
@@ -329,9 +326,9 @@
 	<script type="text/javascript">
 		window.addEventListener("keyup", keylog)
 		function keylog(e){
-			if (e.key=='a'||e.keyCode == '37'){ send('A');next() }
-			if (e.key=='d'||e.keyCode == '39'){ send('B');next() }
-			if (e.key=='w'||e.keyCode == '38'){ send('T');next() }
+			if (e.key=='a'||e.keyCode == '37'){ append('A');next() }
+			if (e.key=='d'||e.keyCode == '39'){ append('B');next() }
+			if (e.key=='w'||e.keyCode == '38'){ append('T');next() }
 			if (e.key=='s'||e.keyCode == '40'){ next() }
 		}
 		
@@ -345,7 +342,6 @@
 		var achvis = false;
 		achcount = [0,1,5,10,20,42,100,159,200,256,313,350,420,456,512,666,729,808,911,1000];
 		function achToggle() {
-			console.log(document.getElementsByClassName("A_bar"))
 			if (!achvis) {
 				for (let i=1; i<21; i++) {
 					if (achcount[i] > count) { break; }
@@ -364,15 +360,23 @@
 		}
 		
 		function navScores() {window.open('scores.html');}
-	  
+		
+		function both() {
+			document.getElementById("greenA").className = 'show'; document.getElementById("greenB").className = 'show';
+			setTimeout(function(){ document.getElementById("greenA").className='green'; document.getElementById("greenB").className='green'; }, 250);
+			append('T')
+			next()
+		}
+		
 		var a = 100;
 		var b = 200;
 		var prepair;
 		var count = 0;
 		index = -2;
+		var results = [];
+		var queue = [];
 		
 		function next(){
-			
 			ach = achcount.indexOf(count)+1;
 			if (ach) {
 				document.getElementById("a"+ach).className = 'A_now'
@@ -413,21 +417,24 @@
 		
 		next()
 		
-		function send(r){
+		function append(r){
 			count = count + 1;
 			document.getElementById("counter").innerHTML = 'Counter '+count;
-			return
+			queue.push([imgids[index],imgids[index+1],r])
+			if (queue.length>9) { send(queue); queue = [] }
+		}
+		
+		function send(squeue){
+			
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
-			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-				// Request finished. Do processing here.
-				}
-			}
-			xhr.send("a="+imgids[index]+"&b="+imgids[index+1]+"&r="+r+"&uid="+uid);
-			count = count + 1;
-			document.getElementById("counter").innerHTML = 'Counter '+count;
+			if (this.readyState === XMLHttpRequest.DONE) {
+				if (this.status === 200) { console.log('Send success',squeue) }
+				else { console.log('Send failed',this.status,squeue) }
+			}}
+			xhr.send("uid="+uid+"&data="+JSON.stringify(squeue)+"&type=sendnsfw");
 		}
 	</script>
 	</div>
