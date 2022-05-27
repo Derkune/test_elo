@@ -1,5 +1,5 @@
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1 user-scalable=yes">
+<meta name="viewport" content="width=device-width initial-scale=1 user-scalable=yes">
 <head>
 	<style>
 	.wrapbox {
@@ -66,9 +66,9 @@
 		z-index: 10;
 	}
 	
-	.sidebar { width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
+	.sidebar { opacity:0; width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
 	
-	#menucheck:checked~#scorelink { top:100; transition: 0.15s linear; }
+	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
 	</style>
@@ -178,8 +178,8 @@
 			else { color = 'black' }
 			plot.removeChild(plot.lastChild) // Remove last indicator
 			drawLine(plot,x,baseline,400-0.4*(ID2Elo[id]-1000),color)
-			var legendText = "Image: "+id+"<br>"+ID2Char[id]+"<br>Elo: "+ID2Elo[id]
-			if (sort=='elo') { legendText = legendText+"<br>Rank: "+x }
+			var legendText = "Image "+id+"<br>"+ID2Char[id]+"<br>Elo "+ID2Elo[id]
+			if (sort=='elo') { legendText = legendText+"<br>Rank "+x }
 			document.getElementById("legend").innerHTML = legendText
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
@@ -191,7 +191,11 @@
 			}
 			//plot = plot0.cloneNode(true); //Yeah this works but doesn't display...
 			
-			sort = document.getElementById("order").value;
+			
+			if (sort != document.getElementById("order").value) {
+				sort = document.getElementById("order").value;
+				if (sort=='char') { document.getElementById("paint").value = 'char'; }
+			}
 			paint = document.getElementById("paint").value;
 			if (dataset != document.getElementById("dataset").value) {
 				document.getElementById("legend").innerHTML = 'Loading...'
