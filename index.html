@@ -1,20 +1,26 @@
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=0.9 user-scalable=yes">
 <head>
 	<style>
-
+	
+	@font-face {
+	  font-family: Wild-Words;
+	  src: url(Assets/WildWordsRoman.ttf);
+	}
+	
 	#title{
-	  font-family: Sans-Serif;
+	  font-family: Wild-Words;
 	  text-align: center;
+	  letter-spacing: 2px;
 	  margin:0;
 	  color: white;
 	  font-size: 72px;
 	}
 	
 	#desc{
-	  font-family: Sans-Serif;
+	  font-family: Wild-Words;
 	  text-align: center;
-	  margin:0;
+	  margin:5;
 	  color: white;
 	  font-size: 24px;
 	}
@@ -55,62 +61,37 @@
 	
 	.wrapbox {
 	  display: flex;
-	  position:relative;
 	  flex-wrap: wrap;
+	  margin: 20 20;
 	  justify-content: center;
 	}
 
 	.imgbox {
 	  display: flex;
-	  background-color: rgb(238,62,84);
+	  position:relative;
 	  flex-wrap: wrap;
 	  width: 400px;
-	  margin: 15 20px;
-	  padding: 10 10;
+	  margin: 30 40px;
 	  text-align: center;
 	  justify-content: center;
 	  border-radius: 10px;
 	}
-	
-	.imgbox:hover {
-	  background-color: rgb(147,188,57);
-	  transition: 0.2s;
-	}
 
-	img {
-	  width: 400px;
-	  height: 400px;
-	  object-fit: contain;
-	}
+	img { object-fit: contain; }
+	
+	#greenA:not(:hover) { opacity:0; transition:0.5s; }
+	#greenA:hover { opacity:1; transition:0.5s; }
+	#greenB:not(:hover) { opacity:0; transition:0.5s; }
+	#greenB:hover { opacity:1; transition:0.5s; }
 	
 	.imgdesc{
 		position:relative;
-		font-family: Sans-Serif;
-		font-size: 22px;
-		top:5;
+		font-family: Wild-Words;
+		letter-spacing: 1px;
+		color:white;
+		font-size: 18;
+		top:-450;
 		margin:0 10;
-	}
-	
-	.select {
-	  background-color: rgb(238,62,84);
-	  border: none;
-	  color: black;
-	  margin: 15 20px;
-	  padding: 15px 32px;
-	  text-align: center;
-	  text-decoration: none;
-	  display: inline-block;
-	  font-size: 16px;
-	  border-radius: 10px;
-	  font-family: Sans-Serif;
-	  font-weight: bold;
-	  font-size: 36px;
-	  width: 190px;
-	}
-	
-	.select:hover {
-	  background-color: rgb(147,188,57);
-	  transition: 0.2s;
 	}
 	
 	.keypadbox {
@@ -133,9 +114,21 @@
 	
 	#menucheck:checked~#scorelink { top:100; transition: 0.15s linear; }
 	#menucheck:checked~#elotoggle { top:200; transition: 0.3s linear; }
-	#menucheck:checked~#other { top:300; transition: 0.45s linear; }
+	#menucheck:checked~#achtoggle { top:300; transition: 0.45s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
-		
+	
+	@keyframes slidein {
+		0%   {left: -200;}
+		100% {left: 0;}
+	}
+	
+	.A_now { opacity:1;position:relative; margin: 0 0 -76 0; top:0; z-index=10; animation-name: slidein; animation-duration:0.5s;}
+	.A_hid { display:none;position:relative; margin: 0 0 -76 0; top:0;}
+	.A_bar { display:block;position:relative; margin: 0 0 -76 0; top:0; animation-name: slidein; animation-duration:0.5s;}
+	.A_pop { display:block;opacity:0;position:relative; margin: 0 0 -76 0; top:0; animation-name: slidein; animation-duration:0.5s;}
+	.A_pop:hover { opacity:1;}
+	
+	
 	</style>
 	
 	<script>
@@ -236,35 +229,92 @@
 	</script>
 </head>
 
-<body style="min-width:500px; background-color:#000000;">
+<body ondragstart="return false" style="min-width:500px; background-color:#000000;">
 	
-	<h1 id='counter' style="color:white;font-family:Sans-Serif; font-size:24; position:fixed; top:0; left:10; z-index:8">Counter: 0</h1>
+	<div style="background-color: rgba(100,100,100,0.5); position:fixed; padding:0 15; border-radius: 15px; z-index:10;"><h1 id='counter' style="color:white;font-family: Wild-Words; letter-spacing: 1px; font-size:24;z-index:10;">Counter 0</h1></div>
+	
+	<div class="content">
+	<!--<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.5);">-->
+	<!--<h1 id="title">Elo Rate Chloe Pics</h1>
+	<p id="desc"> Choose the one that you prefer / like better / want to see more of </p>-->
+	<!--</div>-->
+
+	<div class="wrapbox">
+	  <div class="imgbox" onclick="send('A');next()">
+		<img id="imgA" width=400 height=400>
+		<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index=2'>
+		<img id='greenA' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index=3'>
+		<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
+		<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
+	  <div class="imgbox" onclick="send('B');next()">
+		<img id="imgB" width=400 height=400>
+		<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index=2'>
+		<img id='greenB' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index=3'>
+		<h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4>
+		<h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
+	  <div class="line-break"></div>
+	  <img id='both' class="select" onclick="send('T');next()" src='Assets/both.png' style='margin: 0 15; z-index=10;'>
+	  <img id='skip' class="select" onclick="next()" src='Assets/skip.png' style='margin: 0 15; z-index=10;'>
+	</div>
+	
+	
 	
 	<input type="checkbox" id="menucheck" style="display:none;"/>
 	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
 	
-	<img id='scorelink' class='sidebar' onclick="navScores()" src='Assets/scorelink.svg'></img>
-	<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'></img>
-	<!--<img id='other' class='sidebar' src='Assets/menu.svg'></img>-->
+	<img id='scorelink' class='sidebar' onclick="navScores()" src='Assets/scorelink.svg'>
+	<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'>
+	<img id='achtoggle' class='sidebar' onclick="achToggle()" src='Assets/showach.svg'></img>
 	
-	
-	
-	<div class="content">
-	<!--<div style="display:flex; border-radius: 50px;; max-width: 1000px; justify-content:center; margin:auto; background-color: rgba(0, 0, 0, 0.5);">-->
-	<h1 id="title">Elo Rate Chloe Pics</h1>
-	<p id="desc"> Choose the one that you prefer / like better / want to see more of </p>
-	<!--</div>-->
-
-	<div class="wrapbox">
-	  <div class="imgbox" onclick="send('A');next()"> <img id="imgA"> <h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4> <h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
-	  <div class="imgbox" onclick="send('B');next()"> <img id="imgB"> <h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4> <h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
-	  <div class="line-break"></div>
-	  <input type="button" class="select" value="= Tie =" onclick="send('T');next()">
-	  <input type="button" class="select" value="< Skip >" onclick="next()">
+	<div id='a' style="position:fixed; left:0; top:100; width:200; z-index=10;">
+	<img id='a20' class='A_hid' style="z-index:30;" src="Assets/achievements/20.png">
+	<img id='a19' class='A_hid' style="z-index:29;" src="Assets/achievements/19.png">
+	<img id='a18' class='A_hid' style="z-index:28;" src="Assets/achievements/18.png">
+	<img id='a17' class='A_hid' style="z-index:27;" src="Assets/achievements/17.png">
+	<img id='a16' class='A_hid' style="z-index:26;" src="Assets/achievements/16.png">
+	<img id='a15' class='A_hid' style="z-index:25;" src="Assets/achievements/15.png">
+	<img id='a14' class='A_hid' style="z-index:24;" src="Assets/achievements/14.png">
+	<img id='a13' class='A_hid' style="z-index:23;" src="Assets/achievements/13.png">
+	<img id='a12' class='A_hid' style="z-index:22;" src="Assets/achievements/12.png">
+	<img id='a11' class='A_hid' style="z-index:21;" src="Assets/achievements/11.png">
+	<img id='a10' class='A_hid' style="z-index:20;" src="Assets/achievements/10.png">
+	<img id='a9' class='A_hid' style="z-index:19;" src="Assets/achievements/9.png">
+	<img id='a8' class='A_hid' style="z-index:18;" src="Assets/achievements/8.png">
+	<img id='a7' class='A_hid' style="z-index:17;" src="Assets/achievements/7.png">
+	<img id='a6' class='A_hid' style="z-index:16;" src="Assets/achievements/6.png">
+	<img id='a5' class='A_hid' style="z-index:15;" src="Assets/achievements/5.png">
+	<img id='a4' class='A_hid' style="z-index:14;" src="Assets/achievements/4.png">
+	<img id='a3' class='A_hid' style="z-index:13;" src="Assets/achievements/3.png">
+	<img id='a2' class='A_hid' style="z-index:12;" src="Assets/achievements/2.png">
+	<img id='a1' class='A_hid' style="z-index:11;" src="Assets/achievements/1.png">
 	</div>
 	
+	<div id='s' style="position:fixed; left:0; top:100; width:200; z-index=100;">
+	<img id='s20' class='A_hid' style="z-index:130;" src="Assets/achievements/20.png">
+	<img id='s19' class='A_hid' style="z-index:129;" src="Assets/achievements/19.png">
+	<img id='s18' class='A_hid' style="z-index:128;" src="Assets/achievements/18.png">
+	<img id='s17' class='A_hid' style="z-index:127;" src="Assets/achievements/17.png">
+	<img id='s16' class='A_hid' style="z-index:126;" src="Assets/achievements/16.png">
+	<img id='s15' class='A_hid' style="z-index:125;" src="Assets/achievements/15.png">
+	<img id='s14' class='A_hid' style="z-index:124;" src="Assets/achievements/14.png">
+	<img id='s13' class='A_hid' style="z-index:123;" src="Assets/achievements/13.png">
+	<img id='s12' class='A_hid' style="z-index:122;" src="Assets/achievements/12.png">
+	<img id='s11' class='A_hid' style="z-index:121;" src="Assets/achievements/11.png">
+	<img id='s10' class='A_hid' style="z-index:120;" src="Assets/achievements/10.png">
+	<img id='s9' class='A_hid' style="z-index:119;" src="Assets/achievements/9.png">
+	<img id='s8' class='A_hid' style="z-index:118;" src="Assets/achievements/8.png">
+	<img id='s7' class='A_hid' style="z-index:117;" src="Assets/achievements/7.png">
+	<img id='s6' class='A_hid' style="z-index:116;" src="Assets/achievements/6.png">
+	<img id='s5' class='A_hid' style="z-index:115;" src="Assets/achievements/5.png">
+	<img id='s4' class='A_hid' style="z-index:114;" src="Assets/achievements/4.png">
+	<img id='s3' class='A_hid' style="z-index:113;" src="Assets/achievements/3.png">
+	<img id='s2' class='A_hid' style="z-index:112;" src="Assets/achievements/2.png">
+	<img id='s1' class='A_hid' style="z-index:111;" src="Assets/achievements/1.png">
+	</div>
+	
+	
 	<script type="text/javascript">
-		window.addEventListener("keydown", keylog)
+		window.addEventListener("keyup", keylog)
 		function keylog(e){
 			if (e.key=='a'){ send('A');next() }
 			if (e.key=='d'){ send('B');next() }
@@ -272,11 +322,32 @@
 			if (e.key=='s'){ next() }
 		}
 		
-		var elovis = false
+		var elovis = false;
 		function eloToggle() {
-			if (elovis) { document.getElementById("eloA").style.display = 'none'; document.getElementById("eloB").style.display = 'none' }
-			else { document.getElementById("eloA").style.display = 'block'; document.getElementById("eloB").style.display = 'block' }
+			if (elovis) { document.getElementById("eloA").style.display = 'none'; document.getElementById("eloB").style.display = 'none'; }
+			else { document.getElementById("eloA").style.display = 'block'; document.getElementById("eloB").style.display = 'block'; }
 			elovis = !elovis
+		}
+		
+		var achvis = false;
+		achcount = [0,1,5,10,20,42,100,159,200,256,313,350,420,456,512,666,729,808,911,1000];
+		function achToggle() {
+			console.log(document.getElementsByClassName("A_bar"))
+			if (!achvis) {
+				for (let i=1; i<21; i++) {
+					if (achcount[i] > count) { break; }
+					document.getElementById("a"+i).className = 'A_bar';
+					document.getElementById("s"+i).className = 'A_pop';
+				}
+			}
+			else {
+				for (let i=1; i<21; i++) {
+					if (achcount[i] > count) { break; }
+					document.getElementById("a"+i).className = 'A_hid';
+					document.getElementById("s"+i).className = 'A_hid';
+				}
+			}
+			achvis = !achvis;
 		}
 		
 		function navScores() {window.open('scores.html');}
@@ -285,9 +356,20 @@
 		var b = 200;
 		var prepair;
 		var count = 0;
-		index = -2
+		index = -2;
 		
 		function next(){
+			
+			ach = achcount.indexOf(count)+1;
+			if (ach) {
+				document.getElementById("a"+ach).className = 'A_now'
+				document.getElementById("s"+ach).className = 'A_pop'
+				try {
+					if (achvis) {document.getElementById("a"+(ach-1)).className = 'A_bar'; }
+					else {document.getElementById("a"+(ach-1)).className = 'A_hid';document.getElementById("s"+(ach-1)).className = 'A_hid'; }
+				} catch {}
+			}
+			
 			index = index + 2
 			if (imgids.length>50) {
 				imgids=imgids.slice(-2);
@@ -314,10 +396,12 @@
 		next()
 		
 		function send(r){
+			count = count + 1;
+			document.getElementById("counter").innerHTML = 'Counter '+count;
+			return
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 				// Request finished. Do processing here.

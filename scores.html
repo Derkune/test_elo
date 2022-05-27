@@ -1,5 +1,5 @@
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1 user-scalable=yes">
 <head>
 	<style>
 	.wrapbox {
@@ -167,7 +167,7 @@
 		
 		function updateImg(e){
 			if (plot.lastChild == null) { return 0 } // Check if canvas is drawn yet 
-			var x = Math.floor(e.clientX - plot.getBoundingClientRect().left)
+			var x = Math.floor(e.clientX - plot.getBoundingClientRect().left - 1)
 			if (x<0 || x>=xlim) { return } // Check mouse is inside canvas
 			if (sort=='num') { x=x+1; id=x } 
 			else if (sort=='elo') { var id = Rank2ID[x]; }
