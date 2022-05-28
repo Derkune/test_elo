@@ -1,5 +1,5 @@
 <html>
-<meta name="viewport" content="width=device-width initial-scale=0.6, user-scalable=yes">
+<meta name="viewport" content="width=device-width initial-scale=0.5, user-scalable=yes">
 <head>
 	<style>
 	
@@ -124,6 +124,8 @@
 	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
 	#menucheck:checked~#elotoggle { opacity:1; top:200; transition: 0.3s linear; }
 	#menucheck:checked~#achtoggle { opacity:1; top:300; transition: 0.45s linear; }
+	#menucheck:checked~#discord { opacity:1; top:400; transition: 0.6s linear; }
+	#menucheck:checked~#reddit { opacity:1; top:500; transition: 0.75s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
 	@keyframes slidein {
@@ -158,6 +160,7 @@
 	var ID2Elo = [0]; //Leading zero because IDs start at 1
 	var ID2Char = [0]
 	var Rank2ID = [];
+	var lasttime = Date.now();
 	
 	function getElo(){
 			var xhr = new XMLHttpRequest();
@@ -242,14 +245,14 @@
 	
 	<div class="content" style="min-width:770;">
 		<div class="wrapbox" style="min-width:520;">
-		  <div class="imgbox" onclick="append('A');next()" >
+		  <div class="imgbox" onclick="append('A');" >
 			<img id="imgA" width=400 height=400 style="position:absolute;z-index:1;">
 			<img id="fadeA" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
 			<img id='greenA' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 			<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
 			<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
-		  <div class="imgbox" onclick="append('B');next()" >
+		  <div class="imgbox" onclick="append('B');" >
 			<img id="imgB" width=400 height=400 style="position:absolute;">
 			<img id="fadeB" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
@@ -264,9 +267,11 @@
 		<input type="checkbox" id="menucheck" style="display:none;"/>
 		<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
 		
-		<img id='scorelink' class='sidebar' onclick="navScores()" src='Assets/scorelink.svg'>
-		<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'>
+		<img id='reddit' class='sidebar' onclick="navTo('https://old.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
+		<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
 		<img id='achtoggle' class='sidebar' onclick="achToggle()" src='Assets/showach.svg'></img>
+		<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'>
+		<img id='scorelink' class='sidebar' onclick="navTo('scores.html')" src='Assets/scorelink.svg'>
 		
 		<div id='a' style="position:fixed; left:0; top:100; width:200; z-index:10;">
 			<img id='a20' class='A_hid' style="z-index:30;" src="Assets/achievements/20.png">
@@ -319,9 +324,9 @@
 	<script type="text/javascript">
 		window.addEventListener("keyup", keylog)
 		function keylog(e){
-			if (e.key=='a'||e.keyCode == '37'){ append('A');next() }
-			if (e.key=='d'||e.keyCode == '39'){ append('B');next() }
-			if (e.key=='w'||e.keyCode == '38'){ append('T');next() }
+			if (e.key=='a'||e.keyCode == '37'){ append('A'); }
+			if (e.key=='d'||e.keyCode == '39'){ append('B'); }
+			if (e.key=='w'||e.keyCode == '38'){ append('T'); }
 			if (e.key=='s'||e.keyCode == '40'){ next() }
 		}
 		
@@ -354,7 +359,7 @@
 			achvis = !achvis;
 		}
 		
-		function navScores() {window.open('scores.html');}
+		function navTo(uri) {window.open(uri);}
 		
 		function both() {
 			document.getElementById("greenA").className = 'show'; document.getElementById("greenB").className = 'show';
@@ -413,6 +418,9 @@
 		next()
 		
 		function append(r){
+			if (Date.now()-lasttime < 500) { alert('Slow down and take half a second to look before clicking...'); return}
+			next()
+			lasttime=Date.now();
 			count = count + 1;
 			document.getElementById("counter").innerHTML = 'Counter '+count;
 			queue.push([imgids[index],imgids[index+1],r])

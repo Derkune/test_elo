@@ -69,6 +69,8 @@
 	.sidebar { opacity:0; width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
 	
 	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
+	#menucheck:checked~#discord { opacity:1; top:200; transition: 0.3s linear; }
+	#menucheck:checked~#reddit { opacity:1; top:300; transition: 0.45s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
 	</style>
@@ -78,9 +80,11 @@
 	
 	<input type="checkbox" id="menucheck" style="display:none;"/>
 	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
+	<img id='reddit' class='sidebar' onclick="navTo('https://old.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
+	<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
+	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
 	
-	<img id='scorelink' class='sidebar' onclick="navRank()" src='Assets/ranklink.svg'></img>
-	<!--<img id='other' class='sidebar' src='Assets/menu.svg'></img>-->
+	
 	
 	<div class="wrapbox">
 	  <div> <h1 id="title" > View 
@@ -122,7 +126,7 @@
 		var plot = document.getElementById('plot')
 		//var plot0 = plot.cloneNode(true)
 		
-		function navRank() {window.open('index.html');}
+		function navTo(uri) {window.open(uri);}
 		
 		var charColors = { //Note H,S in HSL
 			Chloe: [215,100],
