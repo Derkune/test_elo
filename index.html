@@ -236,20 +236,20 @@
 	</script>
 </head>
 
-<body ondragstart="return false" style="background-color:#000000" >
+<body ondragstart="return false" style="min-width:770; background-color:#000000;" >
 	
 	<div style="background-color: rgba(100,100,100,0.5); position:fixed; padding:0 15; border-radius: 15px; z-index:10;"><h1 id='counter' style="color:white;font-family: Wild-Words; letter-spacing: 1px; font-size:24;z-index:10;">Counter 0</h1></div>
 	
-	<div class="content" min-width=770>
-		<div class="wrapbox" min-width=520>
-		  <div class="imgbox" onclick="append('A');next()" min-width=520>
+	<div class="content" style="min-width:770;">
+		<div class="wrapbox" style="min-width:520;">
+		  <div class="imgbox" onclick="append('A');next()" >
 			<img id="imgA" width=400 height=400 style="position:absolute;z-index:1;">
 			<img id="fadeA" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
 			<img id='greenA' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
 			<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
 			<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
-		  <div class="imgbox" onclick="append('B');next()" min-width=520>
+		  <div class="imgbox" onclick="append('B');next()" >
 			<img id="imgB" width=400 height=400 style="position:absolute;">
 			<img id="fadeB" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
