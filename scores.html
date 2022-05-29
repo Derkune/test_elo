@@ -2,7 +2,8 @@
 <meta name="viewport" content="width=device-width initial-scale=1 user-scalable=yes">
 <head>
 	<style>
-	.wrapbox {
+	
+	#wrapbox {
 	  display: flex;
 	  flex-wrap: wrap;
 	  margin: auto;
@@ -16,15 +17,17 @@
 
 	#title{
 	  font-family: Sans-Serif;
+	  line-height: 125%;
 	  text-align: center;
 	  margin:10;
 	  color: white;
 	  font-size: 48px;
 	}
 	
-	#title2{
+	.title2{
 	  font-family: Sans-Serif;
-	  margin:10;
+	  margin:10 2;
+	  text-align: center;
 	  color: white;
 	  font-size: 24px;
 	}
@@ -73,6 +76,26 @@
 	#menucheck:checked~#reddit { opacity:1; top:300; transition: 0.45s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
+	.gridimg {
+	  width: 150px;
+	  height: 150px;
+	  object-fit: contain;
+	}
+	
+	.griddiv {
+	  flex-wrap: wrap;
+	  justify-content: center;
+	  width: 150px;
+	  height: 175px;
+	}
+	
+	.gridtxt{
+		font-family: Sans-Serif;
+		color:white;
+		font-size: 12;
+		margin:0 0;
+	}
+	
 	</style>
 </head>
 
@@ -84,31 +107,48 @@
 	<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
 	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
 	
-	
-	
-	<div class="wrapbox">
-	  <div> <h1 id="title" > View 
-		<select id="dataset" onchange="drawCanvas()">
-		<option value="user">User</option>
+	<div> <h1 id="title" >
+		<select id="display" onchange="changeDisplay()">
+		<option value="plot">Plot</option>
+		<option value="sort">Sort</option>
+		</select> with
+		<select id="dataset" onchange="drawCanvas();popGrid(1);">
 		<option value="nsfw">NSFW</option>
+		<option value="user">User</option>
 		</select> Ranking in 
-		<select id="order" onchange="drawCanvas()">
+		<select id="order" onchange="drawCanvas();popGrid(1);">
 		<option value="elo">Elo Score</option>
 		<option value="num">Image</option>
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
-	  <div class="line-break"></div>
-	 
-	  <div id="imgbox"> <img id="simg" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
-	  <div id="plotBox"> <h1 id="legend"></h1><svg id="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
-	  
-	  <div class="line-break"></div>
-	  <div style="display: flex; justify-content: center;"> <h1 id="title2"> With 
-		<select id="paint" onchange="drawCanvas()">
+	<div class="line-break"></div>
+	
+
+	
+	<div id="wrapbox" min-width=770>	 
+	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
+	  <div id="plotBox" class="plot"> <h1 id="legend" class="plot"></h1><svg id="plot" class="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
+	  <div class="line-break plot"></div>
+	  <h1 class="title2 plot"> With 
+		<select id="paint" class="plot"onchange="drawCanvas()">
 		<option value="elo">Elo Score</option>
 		<option value="char">Character</option>
 		<option value="type">Char:Type</option>
-		</select> Coloring</h1> </div>
+		</select> Coloring</h1>
+	  <h1 id="filter1txt" class="title2 grid" style="display:none;"> Filter for </h1>
+		<select id="filter1" class="title2 grid" onchange="updateFilter()">
+		<option value="All">All</option>
+		</select>
+		<h1 class="title2 grid" style="display:none;"> : </h1>
+		<select id="filter2" class="title2 grid" onchange="updateFilter()">
+		<option value="All">Any</option>
+		<option value="Cat">Cat</option>
+		<option value="Cosplay">Cosplay</option>
+		<option value="Hoodie">Hoodie</option>
+		<option value="None">None</option>
+		</select>
+	  <div class="line-break"></div>
+	  
 	</div>
 
 	<script> 
@@ -124,7 +164,131 @@
 		var CharRank = [];
 		var baseline = 200;
 		var plot = document.getElementById('plot')
-		//var plot0 = plot.cloneNode(true)
+		var gridlen = 0;
+		var filterchars = [];
+		var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
+		
+		function replaceOptions(select,list) {
+			for (a in select.options) { select.options.remove(0); }
+			for (c in list) {
+				opt = document.createElement("option");
+				opt.text=list[c]; opt.value=list[c];
+				select.add(opt);
+			}
+		}
+		
+		function updateFilter() {
+			const select = document.getElementById("filter1");
+			const value = select.value;
+			if (value=='All') {
+				filterchars=[];
+				replaceOptions(select,['All'].concat(chars));
+			}
+			else if (value=='+') {}
+			else {
+				if (value[0]=='-') {
+					filterchars.splice(filterchars.indexOf(value.substring(2)),1);
+				} else { filterchars.push(value) }
+				if (filterchars.length) {
+					optchars = []
+					for (let i = 0; i < chars.length; i++) {
+						if (filterchars.includes(chars[i])) { optchars.push('- '+chars[i]) }
+						else { optchars.push(chars[i]) }
+					}
+					replaceOptions(select,['+','All'].concat(optchars))
+				} else { replaceOptions(select,['All'].concat(chars)); }
+			}
+			document.getElementById("filter1txt").innerHTML='Filter for '+filterchars.join(' + ');
+			popGrid(1)
+		}
+
+		function popGrid(from) {
+			console.log('popGrid',from)
+			let filtered = [];
+			let type = document.getElementById("filter1").value
+			let subtype = document.getElementById("filter2").value
+			if (sort=='num') {
+				for (let id = 1; id < ID2Char.length; id++) {
+					tags = ID2Char[id].split(":");
+					if (tags.length==1) { tags.push('None'); }
+					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filtered.length==gridlen) { break }
+				}
+				for (var i = from; i < gridlen+1; i++) {
+					if (i > filtered.length){
+						document.getElementById("gi"+i).style.display='none';
+						document.getElementById("gt"+i).style.display='none';
+					}
+					else {
+						id = filtered[i-1]
+						document.getElementById("gi"+i).style.display='inherit';
+						document.getElementById("gt"+i).style.display='inherit';
+						document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+						document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
+					}
+				}
+			}
+			if (sort=='elo') {
+				for (let i = Rank2ID.length; i > 0 ; i--) {
+					id = Rank2ID[i-1]
+					tags = ID2Char[id].split(":");
+					if (tags.length==1) { tags.push('None'); }
+					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filtered.length==gridlen) { break }
+				}
+				for (var i = from; i < gridlen+1; i++) {
+					if (i > filtered.length){
+						document.getElementById("gi"+i).style.display='none';
+						document.getElementById("gt"+i).style.display='none';
+					}
+					else {
+						id = filtered[i-1]
+						document.getElementById("gi"+i).style.display='inherit';
+						document.getElementById("gt"+i).style.display='inherit';
+						document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+						document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
+					}
+				}
+			}				
+		}
+		
+		function genGrid(len) {
+			box = document.getElementById("wrapbox");
+			for (var i = gridlen+1; i < gridlen+len+1; i++) {
+				const newdiv = document.createElement("div");
+				newdiv.setAttribute('id','gd'+i);
+				newdiv.setAttribute('class','griddiv grid');
+				const newimg = document.createElement("img");
+				newimg.setAttribute('id','gi'+i);
+				newimg.setAttribute('class','gridimg grid');
+				const newtxt = document.createElement("h4");
+				newtxt.setAttribute('id','gt'+i);
+				newtxt.setAttribute('class','gridtxt grid');
+				newtxt.innerHTML='Loading...';
+				box.appendChild(newdiv);
+				newdiv.appendChild(newimg); newdiv.appendChild(newtxt);
+			}
+			gridlen=len
+			popGrid(1)
+			updateFilter()
+		}
+
+		function changeDisplay() {
+			if (document.getElementById('display').value=='sort'){
+				if (!gridlen) { genGrid(60); }
+				else { popGrid(1); }
+				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'none'; }
+				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'inherit'; }
+				document.getElementById("order").remove(2);
+			}
+			else {
+				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'inherit'; }
+				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'none'; }
+				optionchar = document.createElement("option");
+				optionchar.text="Character"; optionchar.value="char";
+				document.getElementById("order").add(optionchar);
+			}
+		}
 		
 		function navTo(uri) {window.open(uri);}
 		
@@ -140,11 +304,9 @@
 			Claire: [250,75],
 			RPG: [0,0],
 			Fate: [300,100]
-		}
-			
+		}		
 		
 		function charSort(){
-			var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
 			var groups = [[],[],[],[],[],[],[],[],[],[],[]];
 			CharRank = [];
 			for (var i = 0; i < xlim; i++) {
@@ -202,8 +364,8 @@
 			}
 			paint = document.getElementById("paint").value;
 			if (dataset != document.getElementById("dataset").value) {
-				document.getElementById("legend").innerHTML = 'Loading...'
 				dataset = document.getElementById("dataset").value;
+				document.getElementById("legend").innerHTML = ''
 				if (dataset=='user') { getElo(0); }
 				if (dataset=='nsfw') { getElo(1); }
 			}
@@ -236,7 +398,8 @@
 						let type = ID2Char[id].split(':')
 						type = type[type.length-1]
 						if (type=='Cat') { L=L-20 }
-						if (type=='Cosplay') { L=L+20 }
+						if (type=='Hoodie') { L=L+15 }
+						if (type=='Cosplay') { L=L+30 }
 					}
 					color = 'hsl('+charColor[0]+','+charColor[1]+'%,'+L+'%)'
 					baseline = 400
@@ -248,8 +411,8 @@
 		}
 		
 		function getElo(type){ // 0 user, 1 nsfw
-			console.log(type)
 			if (storage[type].length) {ID2Elo=storage[type][0]; ID2Char=storage[type][1]; Rank2ID=storage[type][2]; charSort(); return}
+			document.getElementById("legend").innerHTML = 'Loading...'
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -257,7 +420,7 @@
 			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 					ID2Elo=[0]; ID2Char=[0]; Rank2ID=[];
 					var ratings = JSON.parse("[" + xhr.response + "]")[0];
-					console.log(ratings[0][2])
+					//console.log(ratings[0][2])
 					for (var i = 0; i < ratings.length; i++) {
 						ID2Elo.push(ratings[i][0]);
 						ID2Char.push(ratings[i][1]);

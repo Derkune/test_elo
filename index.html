@@ -431,7 +431,7 @@
 		next()
 		
 		function append(r){
-			if (Date.now()-lasttime < 10) { alert('Slow down and take half a second to look before clicking...'); return}
+			if (Date.now()-lasttime < 500) { alert('Slow down and take half a second to look before clicking...'); return}
 			next()
 			lasttime=Date.now();
 			count = count + 1;
