@@ -95,8 +95,26 @@
 		font-size: 12;
 		margin:0 0;
 	}
+
+	#loadmore{
+		display:inherit;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.loadmoretxt{
+		font-family: Sans-Serif;
+		color:white;
+		font-size: 20;
+		margin:0 10;
+		z-index:10;
+	}
+	
+	u:hover{ color:#ADD8E6; }
 	
 	</style>
+	
+	<link rel="icon" type="image/x-icon" href="Assets/favicon.ico">
 </head>
 
 <body style="min-width:700px; background-color:#000000;">
@@ -113,7 +131,7 @@
 		<option value="sort">Sort</option>
 		</select> with
 		<select id="dataset" onchange="drawCanvas();popGrid(1);">
-		<option value="nsfw">NSFW</option>
+		<option value="nsfw">NSFW</option> // NOTE - Switch these before deployment
 		<option value="user">User</option>
 		</select> Ranking in 
 		<select id="order" onchange="drawCanvas();popGrid(1);">
@@ -122,8 +140,6 @@
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
 	<div class="line-break"></div>
-	
-
 	
 	<div id="wrapbox" min-width=770>	 
 	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
@@ -203,29 +219,16 @@
 		}
 
 		function popGrid(from) {
-			console.log('popGrid',from)
 			let filtered = [];
 			let type = document.getElementById("filter1").value
 			let subtype = document.getElementById("filter2").value
+			let rem = 0;
 			if (sort=='num') {
 				for (let id = 1; id < ID2Char.length; id++) {
 					tags = ID2Char[id].split(":");
 					if (tags.length==1) { tags.push('None'); }
 					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
-					if (filtered.length==gridlen) { break }
-				}
-				for (var i = from; i < gridlen+1; i++) {
-					if (i > filtered.length){
-						document.getElementById("gi"+i).style.display='none';
-						document.getElementById("gt"+i).style.display='none';
-					}
-					else {
-						id = filtered[i-1]
-						document.getElementById("gi"+i).style.display='inherit';
-						document.getElementById("gt"+i).style.display='inherit';
-						document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
-						document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
-					}
+					if (filtered.length==gridlen) { rem=ID2Char.length-id; break; }
 				}
 			}
 			if (sort=='elo') {
@@ -234,42 +237,61 @@
 					tags = ID2Char[id].split(":");
 					if (tags.length==1) { tags.push('None'); }
 					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
-					if (filtered.length==gridlen) { break }
+					if (filtered.length==gridlen) { rem=i; break; }
 				}
-				for (var i = from; i < gridlen+1; i++) {
-					if (i > filtered.length){
-						document.getElementById("gi"+i).style.display='none';
-						document.getElementById("gt"+i).style.display='none';
-					}
-					else {
-						id = filtered[i-1]
-						document.getElementById("gi"+i).style.display='inherit';
-						document.getElementById("gt"+i).style.display='inherit';
-						document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
-						document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
-					}
+			}
+			console.log('rem',rem)
+			if (rem<50) { document.getElementById("load50").style.display='none'; } else { document.getElementById("load50").style.display='inherit'; }
+			if (rem<25) { document.getElementById("load25").style.display='none'; } else { document.getElementById("load25").style.display='inherit'; }
+			if (rem==0) { document.getElementById("load10").style.display='none'; } else { document.getElementById("load10").style.display='inherit'; }
+			for (var i = from; i < gridlen+1; i++) {
+				if (i > filtered.length){
+					document.getElementById("gd"+i).style.display='none';
+					document.getElementById("gi"+i).style.display='none';
+					document.getElementById("gt"+i).style.display='none';
 				}
-			}				
+				else {
+					id = filtered[i-1]
+					document.getElementById("gd"+i).style.display='inherit';
+					document.getElementById("gi"+i).style.display='inherit';
+					document.getElementById("gt"+i).style.display='inherit';
+					document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+					document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
+				}
+			}			
+		}
+		
+		function mkElement(type,id,clas) {
+			const newel = document.createElement(type);
+			if (id) { newel.setAttribute('id',id); }
+			if (clas) { newel.setAttribute('class',clas); }
+			return newel
 		}
 		
 		function genGrid(len) {
+			console.log('gengrid',len,gridlen)
+			if (gridlen) { wrapbox.removeChild(document.getElementById('loadmore')) }
 			box = document.getElementById("wrapbox");
 			for (var i = gridlen+1; i < gridlen+len+1; i++) {
-				const newdiv = document.createElement("div");
-				newdiv.setAttribute('id','gd'+i);
-				newdiv.setAttribute('class','griddiv grid');
-				const newimg = document.createElement("img");
-				newimg.setAttribute('id','gi'+i);
-				newimg.setAttribute('class','gridimg grid');
-				const newtxt = document.createElement("h4");
-				newtxt.setAttribute('id','gt'+i);
-				newtxt.setAttribute('class','gridtxt grid');
+				const newdiv = mkElement('div','gd'+i,'griddiv grid');
+				const newimg = mkElement('img','gi'+i,'gridimg grid');
+				const newtxt = mkElement('h4','gt'+i,'gridtxt grid');
 				newtxt.innerHTML='Loading...';
 				box.appendChild(newdiv);
 				newdiv.appendChild(newimg); newdiv.appendChild(newtxt);
 			}
-			gridlen=len
-			popGrid(1)
+			const newdiv = mkElement('div','loadmore','griddiv grid');
+			let newgen = mkElement('u','load10','loadmoretxt grid'); newgen.innerHTML='<u>Load 10 more'; newgen.addEventListener("click", function(){genGrid(10)});
+			newdiv.appendChild(newgen);
+			newgen = mkElement('u','load25','loadmoretxt grid'); newgen.innerHTML='Load 25 more'; newgen.addEventListener("click", function(){genGrid(25)});
+			console.log(newgen)
+			newdiv.appendChild(newgen);
+			newgen = mkElement('u','load50','loadmoretxt grid'); newgen.innerHTML='Load 50 more';newgen.addEventListener("click", function(){genGrid(50)});
+			newdiv.appendChild(newgen);
+			box.appendChild(newdiv);
+			
+			gridlen=gridlen+len
+			console.log('gridlen',gridlen)
 			updateFilter()
 		}
 

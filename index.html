@@ -155,6 +155,8 @@
 	
 	</style>
 	
+	<link rel="icon" type="image/x-icon" href="Assets/favicon.ico">
+	
 	<script>
 	function makeid(length) {
 		var result = '';
@@ -220,9 +222,9 @@
 	
 	function getRandomID(min,max,len) {
 		//return [592,586] //Force first set to test
-		var arr = [];
+		let arr = [];
 		while(arr.length < len){
-			var r = Math.floor(Math.random() * (max - min + 1)) + min;
+			let r = Math.floor(Math.random() * (max - min + 1)) + min;
 			if(imgids.indexOf(r) === -1 && arr.indexOf(r) === -1) arr.push(r);
 		}
 		return arr
@@ -274,8 +276,15 @@
 			<h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4>
 			<h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
 		  <div class="line-break"></div>
-		  <img id='both' class="select" onclick="both()" src='Assets/both.png' style='margin: 0 15; z-index=10;'>
-		  <img id='skip' class="select" onclick="next()" src='Assets/skip.png' style='margin: 0 15; z-index=10;'>
+		  <div id='bothbox' style='width=200; height=100; margin: 0 15; z-index=10; display: flex; position:relative;'>
+			<img id='both' src='Assets/both.png' style='margin: 0 0; z-index:10;'>
+			<img id='both2' class="green" onclick="both()" src='Assets/both2.png' style='margin: 0 0; z-index:11; position:absolute; left:0;'>
+		  </div>
+		  <div id='skipbox' style='width=200; height=100; margin: 0 15; z-index=10; display:flex; position:relative;'>
+			<img id='skip' src='Assets/skip.png' style='margin: 0 0; z-index:10;'>
+			<img id='skip2' class="green" onclick="next(); playPage(2);" src='Assets/skip2.png' style='margin: 0 0; z-index:11; position:absolute; left:0;'>
+		  </div>
+		  
 		</div>
 		
 		<input type="checkbox" id="menucheck" style="display:none;"/>
@@ -334,14 +343,39 @@
 		</div>
 	</div>
 	
+	<audio id='p1'> <source src="Sounds/page1.mp3" type="audio/mpeg"> </audio>
+	<audio id='p2'> <source src="Sounds/page2.mp3" type="audio/mpeg"> </audio>
+	<audio id='p3'> <source src="Sounds/page3.mp3" type="audio/mpeg"> </audio>
+	<audio id='p4'> <source src="Sounds/page4.mp3" type="audio/mpeg"> </audio>
+	<audio id='p5'> <source src="Sounds/page5.mp3" type="audio/mpeg"> </audio>
+	<audio id='p6'> <source src="Sounds/page6.mp3" type="audio/mpeg"> </audio>
+	<audio id='p7'> <source src="Sounds/page7.mp3" type="audio/mpeg"> </audio>
+	<audio id='p8'> <source src="Sounds/page8.mp3" type="audio/mpeg"> </audio>
+	<audio id='p9'> <source src="Sounds/page9.mp3" type="audio/mpeg"> </audio>
+	<audio id='p10'> <source src="Sounds/page10.mp3" type="audio/mpeg"> </audio>
+	<audio id='p11'> <source src="Sounds/page11.mp3" type="audio/mpeg"> </audio>
+	<audio id='p12'> <source src="Sounds/page12.mp3" type="audio/mpeg"> </audio>
+	<audio id='p13'> <source src="Sounds/page13.mp3" type="audio/mpeg"> </audio>
+	<audio id='p14'> <source src="Sounds/page14.mp3" type="audio/mpeg"> </audio>
+	<audio id='p15'> <source src="Sounds/page15.mp3" type="audio/mpeg"> </audio>
+	<audio id='p16'> <source src="Sounds/page16.mp3" type="audio/mpeg"> </audio>
+	<audio id='p17'> <source src="Sounds/page17.mp3" type="audio/mpeg"> </audio>
+	<audio id='p18'> <source src="Sounds/page18.mp3" type="audio/mpeg"> </audio>
+	<audio id='p19'> <source src="Sounds/page19.mp3" type="audio/mpeg"> </audio>
 	
 	<script type="text/javascript">
 		window.addEventListener("keyup", keylog)
 		function keylog(e){
+			if (info) { document.getElementById("info").classList.toggle('fade'); return}
 			if (e.key=='a'||e.keyCode == '37'){ append('A'); document.getElementById("greenA").className = 'show'; setTimeout(function(){ document.getElementById("greenA").className='green';}, 250); }
 			if (e.key=='d'||e.keyCode == '39'){ append('B'); document.getElementById("greenB").className = 'show'; setTimeout(function(){ document.getElementById("greenB").className='green';}, 250); }
 			if (e.key=='w'||e.keyCode == '38'){ both(); }
-			if (e.key=='s'||e.keyCode == '40'){ next() }
+			if (e.key=='s'||e.keyCode == '40'){ next(); playPage(2); }
+		}
+		
+		function playPage(num) {
+			plays = getRandomID(1,19,num);
+			for (let i=0; i<plays.length; i++) { document.getElementById("p"+plays[i]).play(); }
 		}
 		
 		var elovis = false;
@@ -376,6 +410,7 @@
 		function navTo(uri) {window.open(uri);}
 		
 		function both() {
+			playPage(2);
 			document.getElementById("greenA").className = 'show'; document.getElementById("greenB").className = 'show';
 			setTimeout(function(){ document.getElementById("greenA").className='green'; document.getElementById("greenB").className='green'; }, 250);
 			append('T')
@@ -386,6 +421,7 @@
 		var prepair;
 		var count = 0;
 		index = -2;
+		var info = 1 
 		var results = [];
 		var queue = [];
 		
@@ -431,7 +467,8 @@
 		next()
 		
 		function append(r){
-			if (Date.now()-lasttime < 500) { alert('Slow down and take half a second to look before clicking...'); return}
+			if (Date.now()-lasttime < 250) { alert('Slow down and take half a second to look before clicking...'); return}
+			if (r=='T') { playPage(2); } else { playPage(1) }
 			next()
 			lasttime=Date.now();
 			count = count + 1;
@@ -457,6 +494,7 @@
 	
 	<script>
 	function clearinfo() {
+	  info = 0
 	  document.getElementById("info").classList.toggle('fade');
 	}
 	</script>
