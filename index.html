@@ -71,17 +71,28 @@
 		visibility: hidden;
 	}
 	
-	.content {
-	  position: absolute;
+	body {
+	  justify-content: center;
+	  align-items: center;
+	}
+	
+	.sidesbox {
+	  position: fixed;
+	  display:inline-block;
 	  left: 0;
 	  right: 0;
 	  z-index: 2;
 	  margin-left: 20px;
 	  margin-right: 20px;
 	  justify-content: center;
+	  align-items: center;
 	}
 	
 	.wrapbox {
+	  position:absolute;
+	  top:50%;
+	  left: auto;
+	  transform: translateY(-50%);
 	  display: flex;
 	  flex-wrap: wrap;
 	  margin: 20 30 0 150;
@@ -136,10 +147,9 @@
 	.sidebar { opacity:0; width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
 	
 	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
-	#menucheck:checked~#elotoggle { opacity:1; top:200; transition: 0.3s linear; }
-	#menucheck:checked~#achtoggle { opacity:1; top:300; transition: 0.45s linear; }
-	#menucheck:checked~#discord { opacity:1; top:400; transition: 0.6s linear; }
-	#menucheck:checked~#reddit { opacity:1; top:500; transition: 0.75s linear; }
+	#menucheck:checked~#achtoggle { opacity:1; top:200; transition: 0.3s linear; }
+	#menucheck:checked~#discord { opacity:1; top:300; transition: 0.45s linear; }
+	#menucheck:checked~#reddit { opacity:1; top:400; transition: 0.6s linear; }
 	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
 	
 	@keyframes slidein {
@@ -190,10 +200,6 @@
 						ID2Char.push(ratings[i][1]);
 						Rank2ID.push(ratings[i][2]);
 					}
-					document.getElementById("eloA").innerHTML = 'Elo: '+ID2Elo[imgids[index]];
-					document.getElementById("eloB").innerHTML = 'Elo: '+ID2Elo[imgids[index+1]];
-					document.getElementById("charA").innerHTML = ID2Char[imgids[index]];
-					document.getElementById("charB").innerHTML = ID2Char[imgids[index+1]];
 				}
 			}
 			xhr.send("type=user");
@@ -259,22 +265,19 @@
 	
 	<div style="background-color: rgba(100,100,100,0.5); position:fixed; padding:0 15; border-radius: 15px; z-index:10;"><h1 id='counter' style="color:white;font-family: Wild-Words; letter-spacing: 1px; font-size:24;z-index:10;">Counter 0</h1></div>
 	
-	<div class="content" style="min-width:770;">
-		<div class="wrapbox" style="min-width:520;">
+	<div class="wrapbox" style="min-width:520;">
 		  <div class="imgbox" onclick="append('A');" >
 			<img id="imgA" width=400 height=400 style="position:absolute;z-index:1;">
 			<img id="fadeA" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redA' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
 			<img id='greenA' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
-			<h4 id="idA" class="imgdesc"># ImageA</h4> <h4 id="charA" class="imgdesc">Loading...</h4>
-			<h4 id="eloA" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
+		  </div>
 		  <div class="imgbox" onclick="append('B');" >
 			<img id="imgB" width=400 height=400 style="position:absolute;">
 			<img id="fadeB" class='fade' width=400 height=400 style="position:absolute; z-index:2">
 			<img id='redB' src='Assets/red.png' height=456px width=456px style='top:-30; position:absolute; z-index:3'>
 			<img id='greenB' class='green' src='Assets/green.png' height=456px width=456px style='top:-30; position:absolute; z-index:4'>
-			<h4 id="idB" class="imgdesc"># ImageB</h4> <h4 id="charB" class="imgdesc">Loading...</h4>
-			<h4 id="eloB" class="imgdesc" style="display:none">Elo: Loading</h4> </div>
+		  </div>
 		  <div class="line-break"></div>
 		  <div id='bothbox' style='width=200; height=100; margin: 0 15; z-index=10; display: flex; position:relative;'>
 			<img id='both' src='Assets/both.png' style='margin: 0 0; z-index:10;'>
@@ -284,16 +287,15 @@
 			<img id='skip' src='Assets/skip.png' style='margin: 0 0; z-index:10;'>
 			<img id='skip2' class="green" onclick="next(); playPage(2);" src='Assets/skip2.png' style='margin: 0 0; z-index:11; position:absolute; left:0;'>
 		  </div>
-		  
-		</div>
-		
+	</div>
+	
+	<div class="sidesbox" style="min-width:770;">
 		<input type="checkbox" id="menucheck" style="display:none;"/>
 		<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
 		
 		<img id='reddit' class='sidebar' onclick="navTo('https://old.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
 		<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
 		<img id='achtoggle' class='sidebar' onclick="achToggle()" src='Assets/showach.svg'></img>
-		<img id='elotoggle' class='sidebar' onclick="eloToggle()" src='Assets/showelo.svg'>
 		<img id='scorelink' class='sidebar' onclick="navTo('scores.html')" src='Assets/scorelink.svg'>
 		
 		<div id='a' style="position:fixed; left:0; top:100; width:200; z-index:10;">
@@ -378,13 +380,6 @@
 			for (let i=0; i<plays.length; i++) { document.getElementById("p"+plays[i]).play(); }
 		}
 		
-		var elovis = false;
-		function eloToggle() {
-			if (elovis) { document.getElementById("eloA").style.display = 'none'; document.getElementById("eloB").style.display = 'none'; }
-			else { document.getElementById("eloA").style.display = 'block'; document.getElementById("eloB").style.display = 'block'; }
-			elovis = !elovis
-		}
-		
 		var achvis = false;
 		//achcount = [0,1,5,10,20,42,100,159,200,256,313,350,420,456,512,666,729,808,911,1000];
 		achcount = [0,1,5,10,16,21,42,69,81,100,121,144,200,256,313,350,420,456,512,666];
@@ -451,16 +446,8 @@
 				setTimeout(function(){ document.getElementById("fadeA").className='fade'; document.getElementById("fadeB").className='fade'; }, 10); }
 			document.getElementById("imgA").src = images[index].src;
 			document.getElementById("imgB").src = images[index+1].src;
-			document.getElementById("idA").innerHTML = '#'+imgids[index];
-			document.getElementById("idB").innerHTML = '#'+imgids[index+1];
 			document.getElementById("imgA").alt = images[index].src;
 			document.getElementById("imgB").alt = images[index+1].src;
-			if (Rank2ID.length>0){
-				document.getElementById("charA").innerHTML = ID2Char[imgids[index]];
-				document.getElementById("charB").innerHTML = ID2Char[imgids[index+1]];
-				document.getElementById("eloA").innerHTML = 'Elo: '+ID2Elo[imgids[index]];
-				document.getElementById("eloB").innerHTML = 'Elo: '+ID2Elo[imgids[index+1]];
-			}
 			preloadImages(prepair,images,noop);
 		}
 		
