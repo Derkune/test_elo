@@ -423,6 +423,7 @@
 		function next(){
 			ach = achcount.indexOf(count)+1;
 			if (ach) {
+				console.log(ach)
 				document.getElementById("a"+ach).className = 'A_now'
 				document.getElementById("s"+ach).className = 'A_pop'
 				try {
@@ -456,9 +457,9 @@
 		function append(r){
 			if (Date.now()-lasttime < 250) { alert('Slow down and take half a second to look before clicking...'); return}
 			if (r=='T') { playPage(2); } else { playPage(1) }
+			count = count + 1;
 			next()
 			lasttime=Date.now();
-			count = count + 1;
 			document.getElementById("counter").innerHTML = 'Counter '+count;
 			queue.push([imgids[index],imgids[index+1],r])
 			if (queue.length>9) { send(queue); queue = [] }
