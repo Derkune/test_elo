@@ -116,7 +116,7 @@
 	
 	<link rel="icon" type="image/x-icon" href="Assets/favicon.ico">
 </head>
-<!-- This is the lobotomized version of a much more complex page at search.html, lots of unused code here -->
+
 <body style="min-width:700px; background-color:#000000;">
 	
 	<input type="checkbox" id="menucheck" style="display:none;"/>
@@ -126,18 +126,46 @@
 	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
 	
 	<div> <h1 id="title" >
-		Global User Ranking in 
-		<select id="order" onchange="drawCanvas();">
-		<option value="score">Elo Score</option>
-		<!--<option value="image">Image</option>-->
+		<select id="display" onchange="changeDisplay()">
+		<option value="plot">Plot</option>
+		<option value="sort">Sort</option>
+		</select> with
+		<select id="dataset" onchange="handleChange();">
+		<option value="nsfw">NSFW</option> // NOTE - Switch these before deployment
+		<option value="user">User</option>
+		<option value="reddit">Reddit</option>
+		</select> Ranking in 
+		<select id="order" onchange="handleChange();">
+		<option value="score">Score</option>
+		<option value="image">Image</option>
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
 	<div class="line-break"></div>
 	
 	<div id="wrapbox" min-width=770>	 
+	  <h1 id="filter1txt" class="title2 grid" style="display:none;"> Filter for </h1>
+		<select id="filter1" class="title2 grid" onchange="updateFilter()" style="display:none;">
+		<option value="All">All</option>
+		</select>
+		<h1 class="title2 grid" style="display:none;"> : </h1>
+		<select id="filter2" class="title2 grid" onchange="updateFilter()" style="display:none;">
+		<option value="All">Any</option>
+		<option value="Cat">Cat</option>
+		<option value="Cosplay">Cosplay</option>
+		<option value="Hoodie">Hoodie</option>
+		<option value="None">None</option>
+		</select>
 	  <div class="line-break"></div>
 	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
 	  <div id="plotBox" class="plot"> <h1 id="legend" class="plot"></h1><svg id="plot" class="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
+	  <div class="line-break plot"></div>
+	  <h1 class="title2 plot"> With 
+		<select id="paint" class="plot"onchange="handleChange()">
+		<option value="score">Score</option>
+		<option value="char">Character</option>
+		<option value="type">Char:Type</option>
+		<option value="scatter">Scatter</option>
+		</select> Coloring</h1> 
 	</div>
 
 	<script> 
@@ -159,7 +187,164 @@
 		var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
 		var ID2Uri = []
 		
+		function handleChange() {
+			if (dataset != document.getElementById("dataset").value) {updateLists(); return;}
+			updateLists()
+			if (display=='sort'){
+				popGrid(1);
+			}
+			else { drawCanvas() }
+		}
+		
+		function replaceOptions(select,list) {
+			for (a in select.options) { select.options.remove(0); }
+			for (c in list) {
+				opt = document.createElement("option");
+				opt.text=list[c]; opt.value=list[c];
+				select.add(opt);
+			}
+		}
+		
+		function updateFilter() {
+			const select = document.getElementById("filter1");
+			const value = select.value;
+			if (value=='All') {
+				filterchars=[];
+				replaceOptions(select,['All'].concat(chars));
+			}
+			else if (value=='+') {}
+			else {
+				if (value[0]=='-') {
+					filterchars.splice(filterchars.indexOf(value.substring(2)),1);
+				} else { filterchars.push(value) }
+				if (filterchars.length) {
+					optchars = []
+					for (let i = 0; i < chars.length; i++) {
+						if (filterchars.includes(chars[i])) { optchars.push('- '+chars[i]) }
+						else { optchars.push(chars[i]) }
+					}
+					replaceOptions(select,['+','All'].concat(optchars))
+				} else { replaceOptions(select,['All'].concat(chars)); }
+			}
+			document.getElementById("filter1txt").innerHTML='Filter for '+filterchars.join(' + ');
+			popGrid(1)
+		}
+		
 		function navTo(uri) {window.open(uri);}
+		
+		function popGrid(from) {
+			let filtered = [];
+			let type = document.getElementById("filter1").value
+			let subtype = document.getElementById("filter2").value
+			let rem = 0;
+			console.log('sort',sort)
+			if (sort=='image'||sort=='-image') {
+				for (let i = 1; i < ID2Char.length; i++) {
+					if (sort=='-image') { id = ID2Char.length-i } else { id=i }
+					tags = ID2Char[id].split(":");
+					if (tags.length==1) { tags.push('None'); }
+					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filtered.length==gridlen) { rem=ID2Char.length-id; break; }
+				}
+			}
+			if (sort=='score'||sort=='-score') {
+				for (let i = Rank2ID.length; i > 0 ; i--) {
+					if (sort=='-score') { id = Rank2ID[Rank2ID.length-i] } else { id = Rank2ID[i-1] }
+					tags = ID2Char[id].split(":");
+					if (tags.length==1) { tags.push('None'); }
+					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filtered.length==gridlen) { rem=i; break; }
+				}
+			}
+			console.log('rem',rem)
+			if (rem<50) { document.getElementById("load50").style.display='none'; } else { document.getElementById("load50").style.display='inherit'; }
+			if (rem<25) { document.getElementById("load25").style.display='none'; } else { document.getElementById("load25").style.display='inherit'; }
+			if (rem==0) { document.getElementById("load10").style.display='none'; } else { document.getElementById("load10").style.display='inherit'; }
+			for (var i = from; i < gridlen+1; i++) {
+				if (i > filtered.length){
+					document.getElementById("gd"+i).style.display='none';
+					document.getElementById("gi"+i).style.display='none';
+					document.getElementById("gt"+i).style.display='none';
+				}
+				else {
+					id = filtered[i-1]
+					document.getElementById("gd"+i).style.display='inherit';
+					document.getElementById("gi"+i).style.display='inherit';
+					document.getElementById("gt"+i).style.display='inherit';
+					document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+					let uri = ID2Uri[id]
+					document.getElementById("gi"+i).onclick = function(){ navTo('https://old.reddit.com/r/chloe/comments/'+uri) } ;
+					console.log(document.getElementById("gi"+i).onclick )
+					document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
+				}
+			}			
+		}
+		
+		function mkElement(type,id,clas) {
+			const newel = document.createElement(type);
+			if (id) { newel.setAttribute('id',id); }
+			if (clas) { newel.setAttribute('class',clas); }
+			return newel
+		}
+		
+		function genGrid(len) {
+			console.log('gengrid',len,gridlen)
+			if (gridlen) { wrapbox.removeChild(document.getElementById('loadmore')) }
+			box = document.getElementById("wrapbox");
+			for (var i = gridlen+1; i < gridlen+len+1; i++) {
+				const newdiv = mkElement('div','gd'+i,'griddiv grid');
+				const newimg = mkElement('img','gi'+i,'gridimg grid');
+				const newtxt = mkElement('h4','gt'+i,'gridtxt grid');
+				newtxt.innerHTML='Loading...';
+				box.appendChild(newdiv);
+				newdiv.appendChild(newimg); newdiv.appendChild(newtxt);
+			}
+			const newdiv = mkElement('div','loadmore','griddiv grid');
+			let newgen = mkElement('u','load10','loadmoretxt grid'); newgen.innerHTML='<u>Load 10 more'; newgen.addEventListener("click", function(){genGrid(10)});
+			newdiv.appendChild(newgen);
+			newgen = mkElement('u','load25','loadmoretxt grid'); newgen.innerHTML='Load 25 more'; newgen.addEventListener("click", function(){genGrid(25)});
+			console.log(newgen)
+			newdiv.appendChild(newgen);
+			newgen = mkElement('u','load50','loadmoretxt grid'); newgen.innerHTML='Load 50 more';newgen.addEventListener("click", function(){genGrid(50)});
+			newdiv.appendChild(newgen);
+			box.appendChild(newdiv);
+			
+			gridlen=gridlen+len
+			console.log('gridlen',gridlen)
+			updateFilter()
+		}
+
+		function changeDisplay() {
+			console.log('changeDisplay')
+			display = document.getElementById('display').value
+			if (display=='sort'){
+				if (!gridlen) { genGrid(60); }
+				else { popGrid(1); }
+				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'none'; }
+				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'inherit'; }
+				let selectorder = document.getElementById("order");
+				if (selectorder.value=='char') { selectorder.value='image'; handleChange(); }
+				selectorder.remove(2);
+				let optionchar = document.createElement("option");
+				optionchar.text="- Score"; optionchar.value="-score";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
+				optionchar.text="- Image"; optionchar.value="-image";
+				selectorder.add(optionchar);
+			}
+			else {
+				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'inherit'; }
+				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'none'; }
+				let selectorder = document.getElementById("order");
+				let optionchar = document.createElement("option");
+				if (selectorder.value=='-image') { selectorder.value='image'; sort='image'; }
+				else if (selectorder.value=='-score') { selectorder.value='score'; sort='score'; }
+				document.getElementById("order").remove(2); document.getElementById("order").remove(2); //Mutable drops to 2 when removing
+				optionchar.text="Character"; optionchar.value="char";
+				document.getElementById("order").add(optionchar);
+				handleChange()
+			}
+		}
 		
 		var charColors = { //Note H,S in HSL
 			Chloe: [215,100],
@@ -188,10 +373,17 @@
 		}
 		
 		function updateLists() {
+			display = document.getElementById('display').value;
 			if (sort != document.getElementById("order").value) {
 				sort = document.getElementById("order").value;
-				if (sort=='score') { paint= 'score'; }
-				if (sort=='char') { paint = 'char'; }
+				if (sort=='score') { document.getElementById("paint").value = 'score'; }
+				if (sort=='char') { document.getElementById("paint").value = 'char'; }
+			}
+			paint = document.getElementById("paint").value;
+			if (dataset != document.getElementById("dataset").value) {
+				dataset = document.getElementById("dataset").value;
+				document.getElementById("legend").innerHTML = ''
+				getData(dataset);
 			}
 		}
 		
@@ -245,7 +437,6 @@
 				plot.removeChild(plot.lastChild);
 			}
 			
-			updateLists()
 			plot.setAttribute('width',xlim)
 			
 			let rect = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
@@ -324,7 +515,7 @@
 					xlim = Rank2ID.length
 					console.log(storage)
 					charSort()
-					drawCanvas()
+					handleChange()
 					document.getElementById("legend").innerHTML = 'Loading Complete'
 				}
 			}

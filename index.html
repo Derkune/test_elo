@@ -63,6 +63,7 @@
 	  justify-content: center;
 	  background-color: rgba(50, 50, 50, 0.98);
 	  z-index: 10;
+	  display:none;
 	}
 	
 	#info.fade{
@@ -263,7 +264,7 @@
 
 <body ondragstart="return false" style="min-width:770; background-color:#000000;" >
 	
-	<div style="background-color: rgba(100,100,100,0.5); position:fixed; padding:0 15; border-radius: 15px; z-index:10;"><h1 id='counter' style="color:white;font-family: Wild-Words; letter-spacing: 1px; font-size:24;z-index:10;">Counter 0</h1></div>
+	<div id='counterbox' style="background-color: rgba(100,100,100,0.5); position:fixed; padding:0 15; border-radius: 15px; z-index:10; display:none;"><h1 id='counter' style="color:white;font-family: Wild-Words; letter-spacing: 1px; font-size:24;z-index:10; display:inherit;">Counter 0</h1></div>
 	
 	<div class="wrapbox" style="min-width:520;">
 		  <div class="imgbox" onclick="append('A');" >
@@ -298,7 +299,7 @@
 		<img id='achtoggle' class='sidebar' onclick="achToggle()" src='Assets/showach.svg'></img>
 		<img id='scorelink' class='sidebar' onclick="navTo('scores.html')" src='Assets/scorelink.svg'>
 		
-		<div id='a' style="position:fixed; left:0; top:100; width:200; z-index:10;">
+		<div id='a' style="position:fixed; left:0; top:0; width:200; z-index:10;">
 			<img id='a20' class='A_hid' style="z-index:30;" src="Assets/achievements/20.png">
 			<img id='a19' class='A_hid' style="z-index:29;" src="Assets/achievements/19.png">
 			<img id='a18' class='A_hid' style="z-index:28;" src="Assets/achievements/18.png">
@@ -321,7 +322,7 @@
 			<img id='a1' class='A_hid' style="z-index:11;" src="Assets/achievements/1.png">
 		</div>
 		
-		<div id='s' style="position:fixed; left:0; top:100; width:200; z-index:100;">
+		<div id='s' style="position:fixed; left:0; top:0; width:200; z-index:100;">
 			<img id='s20' class='A_hid' style="z-index:130;" src="Assets/achievements/20.png">
 			<img id='s19' class='A_hid' style="z-index:129;" src="Assets/achievements/19.png">
 			<img id='s18' class='A_hid' style="z-index:128;" src="Assets/achievements/18.png">
@@ -368,7 +369,7 @@
 	<script type="text/javascript">
 		window.addEventListener("keyup", keylog)
 		function keylog(e){
-			if (info) { document.getElementById("info").classList.toggle('fade'); return}
+			//if (info) { document.getElementById("info").classList.toggle('fade'); return}
 			if (e.key=='a'||e.keyCode == '37'){ append('A'); document.getElementById("greenA").className = 'show'; setTimeout(function(){ document.getElementById("greenA").className='green';}, 250); }
 			if (e.key=='d'||e.keyCode == '39'){ append('B'); document.getElementById("greenB").className = 'show'; setTimeout(function(){ document.getElementById("greenB").className='green';}, 250); }
 			if (e.key=='w'||e.keyCode == '38'){ both(); }
@@ -393,10 +394,12 @@
 			}
 			else {
 				for (var i=1; i<21; i++) {
+					console.log(i)
 					if (achcount[i] > count) { break; }
 					document.getElementById("a"+i).className = 'A_hid';
 					document.getElementById("s"+i).className = 'A_hid';
 				}
+				if (i>20) { i=20; }
 				document.getElementById("a"+i).className = 'A_now';
 			}
 			achvis = !achvis;
@@ -423,13 +426,18 @@
 		function next(){
 			ach = achcount.indexOf(count)+1;
 			if (ach) {
-				console.log(ach)
 				document.getElementById("a"+ach).className = 'A_now'
 				document.getElementById("s"+ach).className = 'A_pop'
 				try {
 					if (achvis) {document.getElementById("a"+(ach-1)).className = 'A_bar'; }
 					else {document.getElementById("a"+(ach-1)).className = 'A_hid';document.getElementById("s"+(ach-1)).className = 'A_hid'; }
 				} catch {}
+				if (ach==20) {
+					document.getElementById('counterbox').style.display = 'block';
+					document.getElementById('a').style.top = '75px';
+					document.getElementById('s').style.top = '75px';
+					if (!achvis) { setTimeout(function(){ achToggle();}, 500); }
+				}
 			}
 			
 			index = index + 2
