@@ -432,6 +432,7 @@
 					if (achvis) {document.getElementById("a"+(ach-1)).className = 'A_bar'; }
 					else {document.getElementById("a"+(ach-1)).className = 'A_hid';document.getElementById("s"+(ach-1)).className = 'A_hid'; }
 				} catch {}
+				if (achvis) { document.getElementById("a"+ach).style.opacity=1; }
 				if (ach==20) {
 					document.getElementById('counterbox').style.display = 'block';
 					document.getElementById('a').style.top = '75px';
