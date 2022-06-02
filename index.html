@@ -220,8 +220,7 @@
 	function genPairQ(){ //Must load elo before calling
 		pairqueue = [];
 		let search = 10
-		//for (var i = 1; i < Rank2ID.length-1; i++) {
-		for (var i = 330; i < 390; i++) {
+		for (var i = 1; i < Rank2ID.length-1; i++) {
 			let d = Math.floor(2*search*Math.random()) - search;
 			if (d>=0){ d=d+1 } // Avoid zero, shift positive up
 			let b = i + d;
@@ -242,7 +241,6 @@
 	}
 	
 	function getRandomID(min,max,len) {
-		//return [592,586] //Force first set to test
 		let arr = [];
 		while(arr.length < len){
 			let r = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -478,7 +476,7 @@
 		next()
 		
 		function append(r){
-			if (Date.now()-lasttime < 25) { alert('Slow down and take half a second to look before clicking...'); return}
+			if (Date.now()-lasttime < 250) { alert('Slow down and take half a second to look before clicking...'); return}
 			if (r=='T') { playPage(2); } else { playPage(1) }
 			count = count + 1;
 			next()
