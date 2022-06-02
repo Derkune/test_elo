@@ -121,7 +121,7 @@
 	
 	<input type="checkbox" id="menucheck" style="display:none;"/>
 	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
-	<img id='reddit' class='sidebar' onclick="navTo('https://old.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
+	<img id='reddit' class='sidebar' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
 	<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
 	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
 	
@@ -136,7 +136,7 @@
 	
 	<div id="wrapbox" min-width=770>	 
 	  <div class="line-break"></div>
-	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
+	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg" onclick="navSel()"> </div>
 	  <div id="plotBox" class="plot"> <h1 id="legend" class="plot"></h1><svg id="plot" class="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
 	</div>
 
@@ -157,9 +157,14 @@
 		var gridlen = 0;
 		var filterchars = [];
 		var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
+		var selID = 0
 		var ID2Uri = []
 		
 		function navTo(uri) {window.open(uri);}
+		function navSel() {
+			if (!selID) { return }
+			navTo('https://www.reddit.com/r/chloe/comments/'+ID2Uri[selID])
+		}
 		
 		var charColors = { //Note H,S in HSL
 			Chloe: [215,100],
@@ -214,6 +219,7 @@
 			document.getElementById("legend").innerHTML = legendText
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+			selID=id
 		}
 		
 		function drawLine(plot,x,y1,y2,color){
@@ -232,12 +238,12 @@
 		}
 		
 		function drawCircle(plot,x,y,r,color){
-			let rect = document.createElementNS( "http://www.w3.org/2000/svg",'circle' );
-			rect.setAttributeNS( null,'cx',x );
-			rect.setAttributeNS( null,'cy',y );
-			rect.setAttributeNS( null,'r',r );	
-			rect.setAttributeNS( null,'fill',color);
-			plot.appendChild(rect)
+			let circ = document.createElementNS( "http://www.w3.org/2000/svg",'circle' );
+			circ.setAttributeNS( null,'cx',x );
+			circ.setAttributeNS( null,'cy',y );
+			circ.setAttributeNS( null,'r',r );	
+			circ.setAttributeNS( null,'fill',color);
+			plot.appendChild(circ)
 		} 
 		
 		function drawCanvas(){
@@ -248,11 +254,11 @@
 			updateLists()
 			plot.setAttribute('width',xlim)
 			
-			let rect = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
-			rect.setAttributeNS( null,'width',"100%"); // Draw baxkground white
-			rect.setAttributeNS( null,'height',"100%");		
-			rect.setAttributeNS( null,'fill','white');
-			plot.appendChild(rect)
+			let back = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
+			back.setAttributeNS( null,'width',"100%"); // Draw background white
+			back.setAttributeNS( null,'height',"100%");		
+			back.setAttributeNS( null,'fill','white');
+			plot.appendChild(back)
 			
 			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
 				if (sort=='char') { var id = CharRank[i]; console.log(CharRank,i); }
@@ -291,6 +297,14 @@
 				}
 				
 				drawLine(plot,x,baseline,y,color)
+			}
+			if (paint=='score') {
+				let axis = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
+				axis.setAttributeNS( null,'y','199' );
+				axis.setAttributeNS( null,'width','100%' );	
+				axis.setAttributeNS( null,'height','1' );	
+				axis.setAttributeNS( null,'fill','black');
+				plot.appendChild(axis)
 			}
 			drawLine(plot,0,0,0,'white') // Placeholder for indicator removal
 		}
@@ -331,7 +345,7 @@
 			xhr.send("type="+type);
 		}
 
-		getData('nsfw') // change before live
+		getData('user') // change before live
 		getData('uris')
 	</script>
 

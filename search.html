@@ -121,7 +121,7 @@
 	
 	<input type="checkbox" id="menucheck" style="display:none;"/>
 	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
-	<img id='reddit' class='sidebar' onclick="navTo('https://old.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
+	<img id='reddit' class='sidebar' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
 	<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
 	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
 	
@@ -185,6 +185,7 @@
 		var gridlen = 0;
 		var filterchars = [];
 		var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
+		var selID = 0
 		var ID2Uri = []
 		
 		function handleChange() {
@@ -231,6 +232,10 @@
 		}
 		
 		function navTo(uri) {window.open(uri);}
+		function navSel() {
+			if (!selID) { return }
+			navTo('https://www.reddit.com/r/chloe/comments/'+ID2Uri[selID])
+		}
 		
 		function popGrid(from) {
 			let filtered = [];
@@ -273,7 +278,7 @@
 					document.getElementById("gt"+i).style.display='inherit';
 					document.getElementById("gi"+i).src='Images/'+id.toString().padStart(3,'0')+'.jpg';
 					let uri = ID2Uri[id]
-					document.getElementById("gi"+i).onclick = function(){ navTo('https://old.reddit.com/r/chloe/comments/'+uri) } ;
+					document.getElementById("gi"+i).onclick = function(){ navTo('https://www.reddit.com/r/chloe/comments/'+uri) } ;
 					console.log(document.getElementById("gi"+i).onclick )
 					document.getElementById("gt"+i).innerHTML='#'+id+' '+ID2Char[id]+' '+ID2Elo[id];
 				}
@@ -406,6 +411,7 @@
 			document.getElementById("legend").innerHTML = legendText
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
+			selID=id
 		}
 		
 		function drawLine(plot,x,y1,y2,color){
@@ -424,12 +430,12 @@
 		}
 		
 		function drawCircle(plot,x,y,r,color){
-			let rect = document.createElementNS( "http://www.w3.org/2000/svg",'circle' );
-			rect.setAttributeNS( null,'cx',x );
-			rect.setAttributeNS( null,'cy',y );
-			rect.setAttributeNS( null,'r',r );	
-			rect.setAttributeNS( null,'fill',color);
-			plot.appendChild(rect)
+			let circ = document.createElementNS( "http://www.w3.org/2000/svg",'circle' );
+			circ.setAttributeNS( null,'cx',x );
+			circ.setAttributeNS( null,'cy',y );
+			circ.setAttributeNS( null,'r',r );	
+			circ.setAttributeNS( null,'fill',color);
+			plot.appendChild(circ)
 		} 
 		
 		function drawCanvas(){
@@ -439,11 +445,11 @@
 			
 			plot.setAttribute('width',xlim)
 			
-			let rect = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
-			rect.setAttributeNS( null,'width',"100%"); // Draw baxkground white
-			rect.setAttributeNS( null,'height',"100%");		
-			rect.setAttributeNS( null,'fill','white');
-			plot.appendChild(rect)
+			let back = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
+			back.setAttributeNS( null,'width',"100%"); // Draw background white
+			back.setAttributeNS( null,'height',"100%");		
+			back.setAttributeNS( null,'fill','white');
+			plot.appendChild(back)
 			
 			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
 				if (sort=='char') { var id = CharRank[i]; console.log(CharRank,i); }
@@ -482,6 +488,14 @@
 				}
 				
 				drawLine(plot,x,baseline,y,color)
+			}
+			if (paint=='score'&&dataset!='reddit') {
+				let axis = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
+				axis.setAttributeNS( null,'y','199' );
+				axis.setAttributeNS( null,'width','100%' );	
+				axis.setAttributeNS( null,'height','1' );	
+				axis.setAttributeNS( null,'fill','black');
+				plot.appendChild(axis)
 			}
 			drawLine(plot,0,0,0,'white') // Placeholder for indicator removal
 		}
