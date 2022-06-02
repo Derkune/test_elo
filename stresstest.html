@@ -435,6 +435,14 @@
 		var results = [];
 		var queue = [];
 		
+		function selftest() {
+			if (count%3==0){ append('A') }
+			else if (count%3==1){ append('B') }
+			else { both() }
+			setTimeout(function(){ selftest() }, 500);
+		}
+		setTimeout(function(){ selftest() }, 500);
+		
 		function next(){
 			ach = achcount.indexOf(count)+1;
 			if (ach) {
@@ -476,7 +484,7 @@
 		next()
 		
 		function append(r){
-			if (Date.now()-lasttime < 250) { alert('Slow down and take half a second to look before clicking...'); return}
+			if (Date.now()-lasttime < 0) { alert('Slow down and take half a second to look before clicking...'); return}
 			if (r=='T') { playPage(2); } else { playPage(1) }
 			count = count + 1;
 			next()
