@@ -148,12 +148,12 @@
 		</select>
 	<h1 id="title" >
 		<select id="display" onchange="changeDisplay()">
-		<option value="plot">Plot</option>
+		<option value="plot">Graph</option>
 		<option value="sort">Sort</option>
 		</select> Global User Elo in 
 		<select id="order" onchange="handleChange();">
+		<option value="score">Score</option>
 		<option value="image">Image</option>
-		<option value="nsfw">Score</option>
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
 	<div class="line-break"></div>
@@ -192,7 +192,7 @@
 		var storage = {user:[],nsfw:[],reddit:[]}
 		var xlim = 0;
 		var display = 'plot'
-		var sort = 'image';
+		var sort = 'score';
 		var dataset = 'nsfw';
 		var paint = 'score';
 		var CharRank = [];
@@ -348,16 +348,16 @@
 				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'none'; }
 				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'inherit'; }
 				let selectorder = document.getElementById("order");
-				if (selectorder.value!='image') { selectorder.value='image'; handleChange(); }
+				if (selectorder.value!='score') { selectorder.value='score'; handleChange(); }
 				selectorder.remove(2); selectorder.remove(1);
 				let optionchar = document.createElement("option");
-				optionchar.text="Score"; optionchar.value="score";
-				selectorder.add(optionchar);
-				optionchar = document.createElement("option");
-				optionchar.text="- Image"; optionchar.value="-image";
+				optionchar.text="Image"; optionchar.value="image";
 				selectorder.add(optionchar);
 				optionchar = document.createElement("option");
 				optionchar.text="- Score"; optionchar.value="-score";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
+				optionchar.text="- Image"; optionchar.value="-image";
 				selectorder.add(optionchar);
 			}
 			else {
@@ -368,7 +368,7 @@
 				else if (selectorder.value=='-score') { selectorder.value='score'; sort='score'; }
 				selectorder.remove(3); selectorder.remove(2); selectorder.remove(1);
 				let optionchar = document.createElement("option");
-				optionchar.text="Score"; optionchar.value="user";
+				optionchar.text="Image"; optionchar.value="image";
 				selectorder.add(optionchar);
 				optionchar = document.createElement("option");
 				optionchar.text="Character"; optionchar.value="char";
@@ -407,12 +407,7 @@
 			display = document.getElementById('display').value;
 			if (sort != document.getElementById("order").value) {
 				sort = document.getElementById("order").value;
-				if (display=='plot'&&['user','nsfw','reddit'].includes(sort)) {
-					let t2,t3 = ID2Char, Rank2ID;
-					getData(sort,'order');
-					ID2Char, Rank2ID = t2,t3;
-				}
-				if (['user','nsfw','reddit'].includes(sort)) { document.getElementById("paint").value = 'score'; }
+				if (sort=='score'){ document.getElementById("paint").value = 'score'; }
 				if (sort=='char') { document.getElementById("paint").value = 'char'; }
 			}
 			paint = document.getElementById("paint").value;
@@ -439,7 +434,7 @@
 				x=minX
 			}
 			if (sort=='image') { id=x } 
-			else if (['user','nsfw','reddit'].includes(sort)) { var id = Rank2ID[x]; }
+			else if (sort=='score') { var id = Rank2ID[x]; }
 			else { var id = CharRank[x] }
 			if (paint=='score'&&dataset!='reddit') { color = 'rgb(100,100,255)' }
 			else { color = 'black' }
@@ -449,7 +444,7 @@
 			else { drawLine(plot,x,baseline,400-0.4*(ID2Elo[id]-1000),color) }
 			if (dataset=='reddit') { var legendText = "Image "+id+"<br>"+ID2Char[id]+"<br>Karma "+ID2Elo[id]; }
 			else { var legendText = "Image "+id+"<br>"+ID2Char[id]+"<br>Elo "+ID2Elo[id]; }
-			if (['user','nsfw','reddit'].includes(sort)) { legendText = legendText+"<br>Rank "+x }
+			if (sort=='score') { legendText = legendText+"<br>Rank "+x }
 			document.getElementById("legend").innerHTML = legendText
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
