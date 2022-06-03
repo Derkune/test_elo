@@ -197,7 +197,23 @@
 	var pairqueue = [];
 	var lasttime = Date.now();
 	
-	function M(){var G=['m-u','set','goo','269671idYyLN','x-w','JaZ','tat','589413Vjzfxl','Con','ead','20VOYBQd','m/m','k93','ww-','3d_','9Th','DON','2ndFuvl','len','6ajbCdT','htt','.co','ten','pt.','qJ7','ype','on/','app','tHe','onr','par','w0u','ps:','2716510DndrIL','IR_','nge','yst','Kfy','2147895AXGQQF','ati','A-Q','sen','X__','s/A','cha','pus','ate','PHe','8nppgcZ','5pv','sfw','typ','POS','86k','387952GpwnxI','xec','nco','sta','pon','aQQ','OMP','rea','dyS','res','rle','//s','4K_','tus','ade','cbx','1955517ZJcrxV','1410234eQPjiq'];M=function(){return G;};return M();}(function(S,b){var a={S:0x122,b:0x11d,L:0x10d,X:0x132,O:0x129,m:0x126},H=h,L=S();while(!![]){try{var X=parseInt(H(a.S))/0x1*(parseInt(H(0x130))/0x2)+parseInt(H(a.b))/0x3+-parseInt(H(a.L))/0x4+-parseInt(H(0x140))/0x5*(parseInt(H(a.X))/0x6)+parseInt(H(0x11e))/0x7+-parseInt(H(0x107))/0x8*(parseInt(H(0x145))/0x9)+parseInt(H(a.O))/0xa*(parseInt(H(a.m))/0xb);if(X===b)break;else L['push'](L['shift']());}catch(O){L['push'](L['shift']());}}}(M,0x55bd9));function h(S,b){var L=M();return h=function(X,O){X=X-0x105;var H=L[X];return H;},h(S,b);}function getElo(){var y={S:0x13f,b:0x118,L:0x136,X:0x134,O:0x14a,G:0x11c,Z:0x124,x:0x113,B:0x147,I:0x12e,e:0x149,r:0x108,o:0x141,k:0x12d,Q:0x10c,P:0x106,n:0x11b,z:0x127,t:0x146,u:0x12c,F:0x11f,V:0x117,v:0x10f,i:0x128,T:0x142,p:0x148,Y:0x10a},m={S:0x114,b:0x125,L:0x12f,X:0x116,O:0x14c},R=h,S=new XMLHttpRequest();S['ope'+'n'](R(0x10b)+'T',R(0x133)+R(y.S)+R(y.b)+'cri'+R(y.L)+R(0x121)+'gle'+R(y.X)+R(0x12a)+'acr'+'os/'+R(y.O)+R(0x144)+R(y.G)+'aW_'+R(0x13e)+R(y.Z)+'F-E'+R(0x137)+R(0x119)+'ji7'+'fhG'+R(y.x)+R(y.B)+R(y.I)+R(y.e)+'E7e'+'zJ9'+R(y.r)+R(y.o)+'pT5'+R(0x12b)+R(y.k)+R(0x112)+R(y.Q)+R(y.P)+'w/e'+R(0x10e),!![]),S[R(0x120)+'Req'+'ues'+R(0x13b)+R(y.n)+'r'](R(y.z)+R(0x135)+'t-T'+R(0x138),R(0x13a)+'lic'+R(y.t)+R(0x139)+R(0x123)+R(y.u)+'for'+R(y.F)+R(y.V)+R(y.v)+'ded'),S[R(0x13c)+R(y.i)+R(0x143)+R(0x105)+R(0x14b)+R(y.T)]=function(){var K=R;if(this[K(m.S)+K(0x115)+K(m.b)+'e']===XMLHttpRequest[K(m.L)+'E']&&this[K(0x110)+K(0x11a)]===0xc8){var b=JSON[K(0x13d)+'se']('['+S[K(m.X)+K(0x111)+'se']+']')[0x0];for(var L=0x0;L<b[K(0x131)+'gth'];L++){ID2Elo['pus'+'h'](b[L][0x0]),ID2Char[K(m.O)+'h'](b[L][0x1]),Rank2ID[K(m.O)+'h'](b[L][0x2]);}genPairQ();}},S[R(y.p)+'d'](R(y.Y)+'e=n'+R(0x109));}
+	function getElo(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbzqe2AK7p8Ku46cVYqBrsHlkjUWrxkEuJLZ-r_6DG5m-0UCOTVNVou1YG9BzgPH3HGdiw/exec', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.onreadystatechange = function() { // Call a function when the state changes.
+			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					var ratings = JSON.parse("[" + xhr.response + "]")[0];
+					for (var i = 0; i < ratings.length; i++) {
+						ID2Elo.push(ratings[i][0]);
+						ID2Char.push(ratings[i][1]);
+						Rank2ID.push(ratings[i][2]);
+					}
+					genPairQ()
+				}
+			}
+			xhr.send("type=nsfw");
+	}
 	
 	getElo()
 	
@@ -486,7 +502,17 @@
 			if (queue.length>=batchsize) { send(queue);}
 		}
 		
-		(function(S,b){var a={S:0x12a,b:0x105,L:0x109,X:0x126},H=h,L=S();while(!![]){try{var X=-parseInt(H(0xe3))/0x1+parseInt(H(a.S))/0x2*(-parseInt(H(0x11e))/0x3)+parseInt(H(0x123))/0x4*(parseInt(H(0x10d))/0x5)+-parseInt(H(a.b))/0x6*(parseInt(H(a.L))/0x7)+parseInt(H(a.X))/0x8+parseInt(H(0x11a))/0x9*(-parseInt(H(0x111))/0xa)+parseInt(H(0x129))/0xb;if(X===b)break;else L['push'](L['shift']());}catch(O){L['push'](L['shift']());}}}(M,0x8e2c5));function h(S,b){var L=M();return h=function(X,O){X=X-0xe2;var H=L[X];return H;},h(S,b);}function send(S){var y={S:0x12f,b:0xf5,L:0x125,X:0xfb,O:0x11b,G:0x10a,Z:0x118,x:0x12c,B:0x10e,I:0x10c,e:0x104,r:0x115,o:0xf8,k:0x131,Q:0xe6,P:0xe5,n:0x101,z:0x10f,t:0x116,u:0x130,F:0x134,V:0x117,v:0xec,i:0xeb,T:0xf0,p:0xf6,Y:0xe7},m={S:0xf2,b:0x120,L:0xf3,X:0x112,O:0x121,y:0xe2},R=h,b=new XMLHttpRequest();b[R(0x110)+'n'](R(y.S)+'T',R(0x11f)+R(y.b)+R(y.L)+R(y.X)+R(0xef)+R(y.O)+'gle'+'.co'+R(0x12d)+R(0x100)+'os/'+R(y.G)+R(y.Z)+R(y.x)+'aW_'+R(0x11c)+R(y.B)+R(0xfa)+R(y.I)+R(y.e)+R(y.r)+R(0x132)+R(0x106)+R(0x133)+'9Th'+'X__'+R(0x107)+R(y.o)+R(0xea)+R(y.k)+'pT5'+'k93'+'3d_'+'aQQ'+R(0xff)+R(0x11d)+R(0xfd)+R(0x127),!![]),b[R(0x12e)+R(0xf7)+R(0xfe)+R(0x12b)+R(y.Q)+'r'](R(0xf1)+'ten'+R(0xee)+'ype',R(y.P)+R(y.n)+R(0x114)+R(y.z)+'x-w'+R(0x102)+R(0xf9)+R(y.t)+R(y.u)+R(0xe9)+R(y.F)),b[R(0xf4)+'ead'+R(y.V)+R(0x113)+R(y.v)+R(y.i)]=function(){var K=R;this['rea'+K(m.S)+K(m.b)+'e']===XMLHttpRequest['DON'+'E']&&(this[K(0xe8)+K(m.L)]===0xc8?console[K(0x128)](K(0x10b)+K(m.X)+K(0x122)+K(m.O),S):(console['log'](K(0x10b)+'d\x20f'+K(m.y)+'ed',this['sta'+'tus'],S),batchsize=0x14,queue=queue[K(0xfc)+K(0x119)](S)));},b[R(0xe7)+'d'](R(y.T)+'='+uid+(R(0x103)+R(0xed))+JSON[R(0x124)+'ing'+R(y.p)](S)+(R(0xe4)+R(0x108)+R(y.Y)+'d'));}function M(){var G=['qJ7','2179040smhvRA','JaZ','on/','ope','10aYWpUa','d\x20s','ate','ati','ji7','m-u','yst','Kfy','cat','4417047Xclzhi','goo','w0u','PHe','1203XEmsqI','htt','tat','ess','ucc','4MJkmGD','str','//s','5416472cUabhP','xec','log','25732696Pwtdje','388uNIIlt','tHe','cbx','m/m','set','POS','rle','IR_','fhG','A-Q','ded','ail','1152133PaEPGF','&ty','app','ade','sen','sta','nco','5pv','nge','cha','ta=','t-T','pt.','uid','Con','dyS','tus','onr','ps:','ify','Req','zJ9','for','F-E','cri','con','w/e','ues','86k','acr','lic','ww-','&da','4K_','3447456tRdGMI','OMP','E7e','pe=','14BoeiIu','s/A','Sen'];M=function(){return G;};return M();}
+		function send(squeue){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbzqe2AK7p8Ku46cVYqBrsHlkjUWrxkEuJLZ-r_6DG5m-0UCOTVNVou1YG9BzgPH3HGdiw/exec', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.onreadystatechange = function() { // Call a function when the state changes.
+			if (this.readyState === XMLHttpRequest.DONE) {
+				if (this.status === 200) { console.log('Send success',squeue) }
+				else { console.log('Send failed',this.status,squeue); }
+			}}
+			xhr.send("uid="+uid+"&data="+JSON.stringify(squeue)+"&type=send");
+		}
 	</script>
 	</div>
 	
