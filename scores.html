@@ -427,7 +427,7 @@
 
 				let minX = plotXs[0];
 				let minVal = Math.abs(plotXs[0]-x);
-				for (var i = 0; i < plotXs.length-1; i++) {
+				for (var i = 0; i < plotXs.length; i++) {
 					if (Math.abs(plotXs[i]-x)<minVal) { minX = plotXs[i]; minVal = Math.abs(plotXs[i]-x);}
 					if (!minVal) {break}
 				}
@@ -508,7 +508,7 @@
 				else { y=400-0.4*(score-1000) }
 				if (paint=='scatter') { drawCircle(plot,x,y,1,'black'); continue; }
 				if (paint=='score') {
-					if (dataset=='reddit') { color = 'hsl('+((300/(1+Math.exp((score-9000)/4000)))).toString()+',75%,50%)' } // Sigma function rainbow
+					if (dataset=='reddit') { color = 'hsl('+((300/(1+Math.exp((score-9000)/4000)))).toString()+',75%,50%)' } // Sigmoid function rainbow
 					//if (dataset=='reddit') { color = 'hsl('+((120*Math.sqrt(score)/Math.sqrt(25000))+230).toString()+',100%,50%)' }
 					else { color = 'rgb('+r.toString()+','+g.toString()+',0)'; }
 				}
