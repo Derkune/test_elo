@@ -142,7 +142,7 @@
 		<img class='sidebar scorelink green' onclick="navTo('index.html')" src='Assets/sidebar/b_compare2.png' style="width:70; height:70; margin:15;"></img>
 	<div> 
 	<select id="dataset" onchange="handleChange();" style="display:none">
-		<option value="nsfw">NSFW Elo</option> // NOTE - Switch these before deployment
+		<option value="nsfw">NSFW Elo</option>
 		<option value="user">User Elo</option>
 		<option value="reddit">Reddit Karma</option>
 		</select>
@@ -193,7 +193,7 @@
 		var xlim = 0;
 		var display = 'plot'
 		var sort = 'score';
-		var dataset = 'nsfw';
+		var dataset = 'user';
 		var paint = 'score';
 		var CharRank = [];
 		var baseline = 200;
@@ -581,7 +581,7 @@
 			xhr.send("type="+type);
 		}
 
-		getData('nsfw','both') // change before live
+		getData('user','both')
 		getData('uris','none')
 		updateFilter()
 	</script>
