@@ -21,7 +21,7 @@
 	  text-align: center;
 	  margin:10;
 	  color: white;
-	  font-size: 48px;
+	  font-size: 44px;
 	}
 	
 	.title2{
@@ -69,12 +69,21 @@
 		z-index: 10;
 	}
 	
-	.sidebar { opacity:0; width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
+	.green:not(:hover) { opacity:0; transition: opacity 0.5s; }
+	.green:hover { opacity:1; transition: opacity 0.5s; }
 	
-	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
-	#menucheck:checked~#discord { opacity:1; top:200; transition: 0.3s linear; }
-	#menucheck:checked~#reddit { opacity:1; top:300; transition: 0.45s linear; }
-	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
+	.sidebar { width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
+	
+	#menucheck:checked~#menu2 { z-index:11; }
+	#menucheck:not(:checked)~#menu2 { z-index:9; }
+	#menucheck:checked~.scorelink { top:100; transition: 0.1s linear; }
+	#menucheck:checked~.discord { top:200; transition: 0.2s linear; }
+	#menucheck:checked~.reddit { top:300; transition: 0.3s linear; }
+	#menucheck:checked~.info{ top:400; transition: 0.4s linear; }
+	#menucheck:not(:checked)~.scorelink { top:0; opacity: 0; transition: 0.15s linear; }
+	#menucheck:not(:checked)~.discord { top:0; opacity: 0; transition: 0.3s linear; }
+	#menucheck:not(:checked)~.reddit { top:0; opacity: 0; transition: 0.45s linear; }
+	#menucheck:not(:checked)~.info { top:0; opacity: 0; transition: 0.6s linear; }
 	
 	.gridimg {
 	  width: 150px;
@@ -118,37 +127,45 @@
 </head>
 
 <body style="min-width:700px; background-color:#000000;">
-	
-	<input type="checkbox" id="menucheck" style="display:none;"/>
-	<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
-	<img id='reddit' class='sidebar' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
-	<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
-	<img id='scorelink' class='sidebar' onclick="navTo('index.html')" src='Assets/ranklink.svg'></img>
-	
+
+	<input type="checkbox" id="menucheck" style="display:none; "/>
+		<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:70; height:70; margin:15; opacity:inherit; position:fixed;top:0; right:0; z-index:10;' src='Assets/sidebar/b_menu.png'></img></label>
+		<img id="menu2" style='width:70; height:70; margin:15; position:fixed; top:0; right:0; pointer-events:none;' src='Assets/sidebar/b_menu2.png'>
+		
+		<img class='sidebar info' src='Assets/sidebar/b_notes.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar info green' onclick="navTo('info.html')" src='Assets/sidebar/b_notes2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar reddit' src='Assets/sidebar/b_reddit.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar reddit green' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/sidebar/b_reddit2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar discord'src='Assets/sidebar/b_discord.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar discord green' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/sidebar/b_discord2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar scorelink' src='Assets/sidebar/b_compare.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar scorelink green' onclick="navTo('index.html')" src='Assets/sidebar/b_compare2.png' style="width:70; height:70; margin:15;"></img>
 	<div> <h1 id="title" >
 		<select id="display" onchange="changeDisplay()">
 		<option value="plot">Plot</option>
 		<option value="sort">Sort</option>
 		</select> with
 		<select id="dataset" onchange="handleChange();">
-		<option value="nsfw">NSFW</option> // NOTE - Switch these before deployment
-		<option value="user">User</option>
-		<option value="reddit">Reddit</option>
-		</select> Ranking in 
+		<option value="nsfw">NSFW Elo</option> // NOTE - Switch these before deployment
+		<option value="user">User Elo</option>
+		<option value="reddit">Reddit Karma</option>
+		</select> in 
 		<select id="order" onchange="handleChange();">
-		<option value="score">Score</option>
 		<option value="image">Image</option>
+		<option value="user">User Elo</option>
+		<option value="nsfw">NSFW Elo</option>
+		<option value="reddit">Reddit Karma</option>
 		<option value="char">Character</option>
 		</select> Order </h1> </div>
 	<div class="line-break"></div>
 	
 	<div id="wrapbox" min-width=770>	 
-	  <h1 id="filter1txt" class="title2 grid" style="display:none;"> Filter for </h1>
-		<select id="filter1" class="title2 grid" onchange="updateFilter()" style="display:none;">
+	  <h1 id="filter1txt" class="title2" style="display:block;"> Filter for </h1>
+		<select id="filter1" class="title2" onchange="updateFilter()" style="display:block;">
 		<option value="All">All</option>
 		</select>
-		<h1 class="title2 grid" style="display:none;"> : </h1>
-		<select id="filter2" class="title2 grid" onchange="updateFilter()" style="display:none;">
+		<h1 class="title2" style="display:block;"> : </h1>
+		<select id="filter2" class="title2" onchange="updateFilter()" style="display:block;">
 		<option value="All">Any</option>
 		<option value="Cat">Cat</option>
 		<option value="Cosplay">Cosplay</option>
@@ -159,7 +176,7 @@
 	  <div id="imgbox" class="plot"> <img id="simg" class="plot" style="border:2px solid #FFFFFF;" src="Assets/plotinfoblack.svg"> </div>
 	  <div id="plotBox" class="plot"> <h1 id="legend" class="plot"></h1><svg id="plot" class="plot" height="400" style="border:2px solid #FFFFFF;" onmousemove="updateImg(event)"></svg></div>
 	  <div class="line-break plot"></div>
-	  <h1 class="title2 plot"> With 
+	  <h1 class="title2 plot">With 
 		<select id="paint" class="plot"onchange="handleChange()">
 		<option value="score">Score</option>
 		<option value="char">Character</option>
@@ -176,7 +193,7 @@
 		var storage = {user:[],nsfw:[],reddit:[]}
 		var xlim = 0;
 		var display = 'plot'
-		var sort = 'score';
+		var sort = 'image';
 		var dataset = 'nsfw';
 		var paint = 'score';
 		var CharRank = [];
@@ -187,6 +204,7 @@
 		var chars = ['Chloe','Albino','Zoe','Lila','Iris','Willow','Colette','Amber','Claire','RPG','Fate'];
 		var selID = 0
 		var ID2Uri = []
+		var plotXs = []
 		
 		function handleChange() {
 			if (dataset != document.getElementById("dataset").value) {updateLists(); return;}
@@ -228,13 +246,20 @@
 				} else { replaceOptions(select,['All'].concat(chars)); }
 			}
 			document.getElementById("filter1txt").innerHTML='Filter for '+filterchars.join(' + ');
-			popGrid(1)
+			handleChange()
 		}
 		
 		function navTo(uri) {window.open(uri);}
 		function navSel() {
 			if (!selID) { return }
 			navTo('https://www.reddit.com/r/chloe/comments/'+ID2Uri[selID])
+		}
+		
+		function filter(id,type,subtype) {
+			tags = ID2Char[id].split(":");
+			if (tags.length==1) { tags.push('None'); }
+			if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { return 1 }
+			return 0
 		}
 		
 		function popGrid(from) {
@@ -246,18 +271,14 @@
 			if (sort=='image'||sort=='-image') {
 				for (let i = 1; i < ID2Char.length; i++) {
 					if (sort=='-image') { id = ID2Char.length-i } else { id=i }
-					tags = ID2Char[id].split(":");
-					if (tags.length==1) { tags.push('None'); }
-					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filter(id,type,subtype)) { filtered.push(id) }
 					if (filtered.length==gridlen) { rem=ID2Char.length-id; break; }
 				}
 			}
 			if (sort=='score'||sort=='-score') {
 				for (let i = Rank2ID.length; i > 0 ; i--) {
 					if (sort=='-score') { id = Rank2ID[Rank2ID.length-i] } else { id = Rank2ID[i-1] }
-					tags = ID2Char[id].split(":");
-					if (tags.length==1) { tags.push('None'); }
-					if ((type=='All'||filterchars.includes(tags[0]))&&(subtype=='All'||subtype==tags[1])) { filtered.push(id) }
+					if (filter(id,type,subtype)) { filtered.push(id) }
 					if (filtered.length==gridlen) { rem=i; break; }
 				}
 			}
@@ -328,25 +349,37 @@
 				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'none'; }
 				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'inherit'; }
 				let selectorder = document.getElementById("order");
-				if (selectorder.value=='char') { selectorder.value='image'; handleChange(); }
-				selectorder.remove(2);
+				if (selectorder.value!='image') { selectorder.value='image'; handleChange(); }
+				selectorder.remove(4); selectorder.remove(3); selectorder.remove(2); selectorder.remove(1);
 				let optionchar = document.createElement("option");
-				optionchar.text="- Score"; optionchar.value="-score";
+				optionchar.text="Score"; optionchar.value="score";
 				selectorder.add(optionchar);
 				optionchar = document.createElement("option");
 				optionchar.text="- Image"; optionchar.value="-image";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
+				optionchar.text="- Score"; optionchar.value="-score";
 				selectorder.add(optionchar);
 			}
 			else {
 				for (let part of document.getElementsByClassName('plot')) { part.style.display = 'inherit'; }
 				for (let part of document.getElementsByClassName('grid')) { part.style.display = 'none'; }
 				let selectorder = document.getElementById("order");
-				let optionchar = document.createElement("option");
 				if (selectorder.value=='-image') { selectorder.value='image'; sort='image'; }
 				else if (selectorder.value=='-score') { selectorder.value='score'; sort='score'; }
-				document.getElementById("order").remove(2); document.getElementById("order").remove(2); //Mutable drops to 2 when removing
+				selectorder.remove(3); selectorder.remove(2); selectorder.remove(1);
+				let optionchar = document.createElement("option");
+				optionchar.text="User Elo"; optionchar.value="user";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
+				optionchar.text="NSFW Elo"; optionchar.value="nsfw";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
+				optionchar.text="Reddit Karma"; optionchar.value="reddit";
+				selectorder.add(optionchar);
+				optionchar = document.createElement("option");
 				optionchar.text="Character"; optionchar.value="char";
-				document.getElementById("order").add(optionchar);
+				selectorder.add(optionchar);
 				handleChange()
 			}
 		}
@@ -381,14 +414,20 @@
 			display = document.getElementById('display').value;
 			if (sort != document.getElementById("order").value) {
 				sort = document.getElementById("order").value;
-				if (sort=='score') { document.getElementById("paint").value = 'score'; }
+				if (display=='plot'&&['user','nsfw','reddit'].includes(sort)) {
+					let t2,t3 = ID2Char, Rank2ID;
+					getData(sort,'order');
+					ID2Char, Rank2ID = t2,t3;
+				}
+				if (['user','nsfw','reddit'].includes(sort)) { document.getElementById("paint").value = 'score'; }
 				if (sort=='char') { document.getElementById("paint").value = 'char'; }
 			}
 			paint = document.getElementById("paint").value;
 			if (dataset != document.getElementById("dataset").value) {
 				dataset = document.getElementById("dataset").value;
 				document.getElementById("legend").innerHTML = ''
-				getData(dataset);
+				if (display=='plot') { getData(dataset,'dataset'); }
+				else { getData(dataset,'dataset'); }
 			}
 		}
 		
@@ -396,8 +435,18 @@
 			if (plot.lastChild == null) { return 0 } // Check if canvas is drawn yet 
 			var x = Math.floor(e.clientX - plot.getBoundingClientRect().left - 1)
 			if (x<0 || x>=xlim) { return } // Check mouse is inside canvas
-			if (sort=='image') { x=x+1; id=x } 
-			else if (sort=='score') { var id = Rank2ID[x]; }
+			if (plotXs.length<Rank2ID.length) {
+
+				let minX = plotXs[0];
+				let minVal = Math.abs(plotXs[0]-x);
+				for (var i = 0; i < plotXs.length-1; i++) {
+					if (Math.abs(plotXs[i]-x)<minVal) { minX = plotXs[i]; minVal = Math.abs(plotXs[i]-x);}
+					if (!minVal) {break}
+				}
+				x=minX
+			}
+			if (sort=='image') { id=x } 
+			else if (['user','nsfw','reddit'].includes(sort)) { var id = Rank2ID[x]; }
 			else { var id = CharRank[x] }
 			if (paint=='score'&&dataset!='reddit') { color = 'rgb(100,100,255)' }
 			else { color = 'black' }
@@ -407,7 +456,7 @@
 			else { drawLine(plot,x,baseline,400-0.4*(ID2Elo[id]-1000),color) }
 			if (dataset=='reddit') { var legendText = "Image "+id+"<br>"+ID2Char[id]+"<br>Karma "+ID2Elo[id]; }
 			else { var legendText = "Image "+id+"<br>"+ID2Char[id]+"<br>Elo "+ID2Elo[id]; }
-			if (sort=='score') { legendText = legendText+"<br>Rank "+x }
+			if (['user','nsfw','reddit'].includes(sort)) { legendText = legendText+"<br>Rank "+x }
 			document.getElementById("legend").innerHTML = legendText
 			var simg = document.getElementById("simg"); // Update selection image
 			simg.src='Images/'+id.toString().padStart(3,'0')+'.jpg';
@@ -442,7 +491,7 @@
 			while (plot.lastChild) { // Purge all bars from plot
 				plot.removeChild(plot.lastChild);
 			}
-			
+			plotXs = []
 			plot.setAttribute('width',xlim)
 			
 			let back = document.createElementNS( "http://www.w3.org/2000/svg","rect" );
@@ -451,9 +500,12 @@
 			back.setAttributeNS( null,'fill','white');
 			plot.appendChild(back)
 			
+			let type = document.getElementById("filter1").value
+			let subtype = document.getElementById("filter2").value
 			for (var i = 0; i < xlim; i++) { // Draw each elo score as a bar plot
 				if (sort=='char') { var id = CharRank[i]; console.log(CharRank,i); }
 				else { var id = Rank2ID[i] }
+				if (!filter(id,type,subtype)) { continue }
 				let score = ID2Elo[id];
 				let y=0;
 				let r=0;
@@ -463,6 +515,7 @@
 				baseline = 200
 				x=i
 				if (sort=='image'){ x = id }
+				plotXs.push(x);
 				if (dataset=='reddit') { y=400-(4*score/300); baseline=400; }
 				else { y=400-0.4*(score-1000) }
 				if (paint=='scatter') { drawCircle(plot,x,y,1,'black'); continue; }
@@ -486,7 +539,6 @@
 					color = 'hsl('+charColor[0]+','+charColor[1]+'%,'+L+'%)'
 					baseline = 400
 				}
-				
 				drawLine(plot,x,baseline,y,color)
 			}
 			if (paint=='score'&&dataset!='reddit') {
@@ -497,12 +549,17 @@
 				axis.setAttributeNS( null,'fill','black');
 				plot.appendChild(axis)
 			}
+			console.log(plotXs,Rank2ID.length)
 			drawLine(plot,0,0,0,'white') // Placeholder for indicator removal
 		}
 		
-		function getData(type){
+		function getData(type,update){
 			console.log(type,storage[type])
-			if (type!='uris'&&storage[type].length) {ID2Elo=storage[type][0]; ID2Char=storage[type][1]; Rank2ID=storage[type][2]; xlim = Rank2ID.length; charSort(); handleChange(); return}
+			if (type!='uris'&&storage[type].length) {
+				if(update!='order'){ID2Elo=storage[type][0]; ID2Char=storage[type][1]; xlim = ID2Elo.length-1;}
+				if (update!='dataset') { Rank2ID = storage[type][2]; ID2Char=storage[type][1]; xlim = Rank2ID.length; charSort();}
+				handleChange(); return
+			}
 			document.getElementById("legend").innerHTML = 'Loading...'
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", 'https://script.google.com/macros/s/AKfycbytrbRXHOYt1NdJlCJO5baF9YK9HwL2RJ82yMe89FIHCxo9qjQjjJW-y5J36p_rKmGy/exec', true);
@@ -517,18 +574,18 @@
 						if (display=='sort') { handleChange(); }
 						return
 					}
-					ID2Elo=[0]; ID2Char=[0]; Rank2ID=[];
+					let tID2Elo=[0]; tID2Char=[0]; tRank2ID=[];
 					var ratings = JSON.parse("[" + xhr.response + "]")[0];
 					//console.log(ratings[0][2])
 					for (var i = 0; i < ratings.length; i++) {
-						ID2Elo.push(ratings[i][0]);
-						ID2Char.push(ratings[i][1]);
-						Rank2ID.push(ratings[i][2]);
+						tID2Elo.push(ratings[i][0]);
+						tID2Char.push(ratings[i][1]);
+						tRank2ID.push(ratings[i][2]);
 					}
-					storage[type].push(ID2Elo,ID2Char,Rank2ID);
-					xlim = Rank2ID.length
+					storage[type].push(tID2Elo,tID2Char,tRank2ID);
+					if(update!='order'){ID2Elo=storage[type][0]; ID2Char=storage[type][1]; xlim = ID2Elo.length-1;}
+					if (update!='dataset') { Rank2ID = storage[type][2]; ID2Char=storage[type][1]; xlim = Rank2ID.length; charSort();}
 					console.log(storage)
-					charSort()
 					handleChange()
 					document.getElementById("legend").innerHTML = 'Loading Complete'
 				}
@@ -536,8 +593,9 @@
 			xhr.send("type="+type);
 		}
 
-		getData('nsfw') // change before live
-		getData('uris')
+		getData('nsfw','both') // change before live
+		getData('uris','none')
+		updateFilter()
 	</script>
 
 

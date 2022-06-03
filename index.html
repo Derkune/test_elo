@@ -123,8 +123,8 @@
 	.fade { animation-name: crossin; animation-duration:0.5s; animation-fill-mode: forwards; }
 	.show { display:block; opacity:1; transition:0.25s; }	
 	
-	.green:not(:hover) { opacity:0; transition:0.5s; }
-	.green:hover { opacity:1; transition:0.5s; }
+	.green:not(:hover) { opacity:0; transition: opacity 0.5s; }
+	.green:hover { opacity:1; transition: opacity 0.5s; }
 	
 	.imgdesc{
 		position:relative;
@@ -145,13 +145,20 @@
 	
 	.line-break { width: 100%; margin: 0; }
 
-	.sidebar { opacity:0; width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
+	.sidebar { width:100; height:100; position:fixed; right:0; display: block; z-index:9; }
 	
-	#menucheck:checked~#scorelink { opacity:1; top:100; transition: 0.15s linear; }
-	#menucheck:checked~#achtoggle { opacity:1; top:200; transition: 0.3s linear; }
-	#menucheck:checked~#discord { opacity:1; top:300; transition: 0.45s linear; }
-	#menucheck:checked~#reddit { opacity:1; top:400; transition: 0.6s linear; }
-	#menucheck:not(:checked)~.sidebar { top: 0; transition: 0.5s; }
+	#menucheck:checked~#menu2 { z-index:11; }
+	#menucheck:not(:checked)~#menu2 { z-index:9; }
+	#menucheck:checked~.scorelink { top:100; transition: 0.1s linear; }
+	#menucheck:checked~.achtoggle { top:200; transition: 0.2s linear; }
+	#menucheck:checked~.discord { top:300; transition: 0.3s linear; }
+	#menucheck:checked~.reddit { top:400; transition: 0.4s linear; }
+	#menucheck:checked~.info{ top:500; transition: 0.5s linear; }
+	#menucheck:not(:checked)~.scorelink { top:0; opacity: 0; transition: 0.15s linear; }
+	#menucheck:not(:checked)~.achtoggle { top:0; opacity: 0; transition: 0.3s linear; }
+	#menucheck:not(:checked)~.discord { top:0; opacity: 0; transition: 0.45s linear; }
+	#menucheck:not(:checked)~.reddit { top:0; opacity: 0; transition: 0.6s linear; }
+	#menucheck:not(:checked)~.info { top:0; opacity: 0; transition: 0.75s linear; }
 	
 	@keyframes slidein {
 		0%   {left: -200;}
@@ -236,7 +243,7 @@
 		pair = pairqueue.pop();
 		a = pair[0]; b = pair[1];
 		if (pairqueue.length==0) { genPairQ() }
-		console.log('Load Rankings:',a,b,'IDs:',Rank2ID[a],Rank2ID[b])
+		console.log('Count',count+1,'Load Rankings:',a,b,'IDs:',Rank2ID[a],Rank2ID[b])
 		return [Rank2ID[a],Rank2ID[b]]
 	}
 	
@@ -303,13 +310,21 @@
 	</div>
 	
 	<div class="sidesbox" style="min-width:770;">
-		<input type="checkbox" id="menucheck" style="display:none;"/>
-		<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:100; height:100; position:fixed; top:0; right:0; z-index:10;' src='Assets/menu.svg'></img></label>
 		
-		<img id='reddit' class='sidebar' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/reddit.svg'></img>
-		<img id='discord' class='sidebar' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/discord.svg'>
-		<img id='achtoggle' class='sidebar' onclick="achToggle()" src='Assets/showach.svg'></img>
-		<img id='scorelink' class='sidebar' onclick="navTo('scores.html')" src='Assets/scorelink.svg'>
+		<input type="checkbox" id="menucheck" style="display:none; "/>
+		<label for="menucheck" style='display:inline-block;'><img id='menu' style='width:70; height:70; margin:15; opacity:inherit; position:fixed;top:0; right:0; z-index:10;' src='Assets/sidebar/b_menu.png'></img></label>
+		<img id="menu2" style='width:70; height:70; margin:15; position:fixed; top:0; right:0; pointer-events:none;' src='Assets/sidebar/b_menu2.png'>
+		
+		<img class='sidebar info' src='Assets/sidebar/b_notes.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar info green' onclick="navTo('info.html')" src='Assets/sidebar/b_notes2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar reddit' src='Assets/sidebar/b_reddit.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar reddit green' onclick="navTo('https://www.reddit.com/r/chloe/')" src='Assets/sidebar/b_reddit2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar discord'src='Assets/sidebar/b_discord.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar discord green' onclick="navTo('https://discord.gg/TsBGYz4VTg')" src='Assets/sidebar/b_discord2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar achtoggle' src='Assets/sidebar/b_achievements.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar achtoggle green' onclick="achToggle()" src='Assets/sidebar/b_achievements2.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar scorelink' src='Assets/sidebar/b_score.png' style="width:70; height:70; margin:15;"></img>
+		<img class='sidebar scorelink green' onclick="navTo('scores.html')" src='Assets/sidebar/b_score2.png' style="width:70; height:70; margin:15;"></img>
 		
 		<div id='a' style="position:fixed; left:0; top:0; width:200; z-index:10;">
 			<img id='a20' class='A_hid' style="z-index:30;" src="Assets/achievements/20.png">
@@ -434,6 +449,7 @@
 		var info = 1 
 		var results = [];
 		var queue = [];
+		var batchsize = 10
 		
 		function next(){
 			ach = achcount.indexOf(count)+1;
@@ -483,7 +499,7 @@
 			lasttime=Date.now();
 			document.getElementById("counter").innerHTML = 'Counter '+count;
 			queue.push([imgids[index],imgids[index+1],r])
-			if (queue.length>9) { send(queue); queue = [] }
+			if (queue.length>=batchsize) { send(queue);}
 		}
 		
 		function send(squeue){
@@ -493,7 +509,7 @@
 			xhr.onreadystatechange = function() { // Call a function when the state changes.
 			if (this.readyState === XMLHttpRequest.DONE) {
 				if (this.status === 200) { console.log('Send success',squeue) }
-				else { console.log('Send failed',this.status,squeue) }
+				else { console.log('Send failed',this.status,squeue); batchsize=20; queue=queue.concat(squeue) }
 			}}
 			xhr.send("uid="+uid+"&data="+JSON.stringify(squeue)+"&type=send");
 		}
