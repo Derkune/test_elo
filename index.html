@@ -226,8 +226,8 @@
 	
 	function genPairQ(){ //Must load elo before calling
 		pairqueue = [];
-		let search = 4
-		for (var i = 1; i < Rank2ID.length-1; i++) {
+		let search = 10
+		for (var i = 5; i < Rank2ID.length-5; i++) {
 			let d = Math.floor(2*search*Math.random()) - search;
 			if (d>=0){ d=d+1 } // Avoid zero, shift positive up
 			let b = i + d;
